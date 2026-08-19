@@ -18,9 +18,17 @@ describe('AppController (e2e)', () => {
   });
 
   it('/ (GET)', () => {
-    return request(app.getHttpServer()).get('/').expect(200).expect({
-      message: 'Your Shadow API',
-    });
+    return request(app.getHttpServer())
+      .get('/')
+      .expect(200)
+      .expect({ message: 'Your Shadow API' });
+  });
+
+  it('/health (GET)', () => {
+    return request(app.getHttpServer())
+      .get('/health')
+      .expect(200)
+      .expect('Content-Type', /json/);
   });
 
   afterEach(async () => {
