@@ -8,6 +8,11 @@
     "packages/*"
   ],
   "scripts": {
+    "lint": "bun run --filter @your-shadow/web lint && bun run --filter @your-shadow/api lint",
+    "typecheck": "bun run contracts:build && bun run contracts:typecheck && bun run --filter @your-shadow/web typecheck && bun run --filter @your-shadow/api typecheck",
+    "test": "bun run contracts:build && bun run --filter @your-shadow/api test",
+    "test:e2e": "bun run contracts:build && bun run --filter @your-shadow/api test:e2e",
+    "build": "bun run contracts:build && bun run --filter @your-shadow/web build && bun run --filter @your-shadow/api build",
     "db:migration:create": "cd apps/api && bun run typeorm migration:create",
     "db:migration:generate": "cd apps/api && bun run typeorm migration:generate -d src/database/typeorm.data-source.ts",
     "db:migration:run": "cd apps/api && bun run typeorm migration:run -d src/database/typeorm.data-source.ts",
