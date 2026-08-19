@@ -12,6 +12,8 @@
     "db:migration:generate": "cd apps/api && bun run typeorm migration:generate -d src/database/typeorm.data-source.ts",
     "db:migration:run": "cd apps/api && bun run typeorm migration:run -d src/database/typeorm.data-source.ts",
     "db:migration:show": "cd apps/api && bun run typeorm migration:show -d src/database/typeorm.data-source.ts",
-    "db:migration:revert": "cd apps/api && bun run typeorm migration:revert -d src/database/typeorm.data-source.ts"
+    "db:migration:revert": "cd apps/api && bun run typeorm migration:revert -d src/database/typeorm.data-source.ts",
+    "contracts:build": "bun run --filter @your-shadow/contracts build",
+    "contracts:typecheck": "bun run --filter @your-shadow/contracts typecheck"
   }
 }
