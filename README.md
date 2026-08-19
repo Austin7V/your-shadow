@@ -90,3 +90,17 @@ The following features are intentionally excluded from the first Web MVP release
 Your Shadow is not a medical service. It does not diagnose, treat, cure, or replace advice from a qualified healthcare professional.
 
 The Web MVP is intended only for adults aged 18 and older. Users with chronic conditions, injuries, pain, or other health concerns should consult a qualified healthcare professional before following nutrition or workout recommendations.
+
+## Quality Commands
+
+Run all quality checks from the repository root.
+
+| Command | Description |
+| --- | --- |
+| `bun run lint` | Runs lint checks for the web and API workspaces. |
+| `bun run typecheck` | Builds shared contracts and checks TypeScript types in all workspaces. |
+| `bun run test` | Builds shared contracts and runs API unit tests. |
+| `bun run test:e2e` | Builds shared contracts and runs API end-to-end tests. |
+| `bun run build` | Builds shared contracts, the Next.js web app, and the NestJS API. |
+
+`bun run test:e2e` requires PostgreSQL to be running through Docker Compose and a local `apps/api/.env` file.
