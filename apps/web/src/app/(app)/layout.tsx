@@ -31,7 +31,7 @@ export default function ApplicationLayout({
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl px-6 py-10 sm:px-10 lg:px-16">
+      <main className="mx-auto w-full max-w-6xl px-6 py-10 pb-28 sm:px-10 lg:px-16 md:pb-10">
         {children}
       </main>
     </div>
