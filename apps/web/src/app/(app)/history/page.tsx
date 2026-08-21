@@ -1,3 +1,11 @@
+import { FeaturePageShell } from "../../components/feature-page-shell";
+
 export default function HistoryPage() {
-  return <h1 className="text-3xl font-bold">History</h1>;
+  return (
+    <FeaturePageShell
+      eyebrow="History"
+      title="See your progress over time"
+      description="Your completed meals, workouts, and daily check-ins will appear here."
+    />
+  );
 }
