@@ -74,4 +74,13 @@ describe('AuthTokenService', () => {
       secondTokens.refreshTokenHash,
     );
   });
+  it('hashes an existing refresh token', () => {
+    const refreshToken = 'existing-refresh-token';
+
+    const expectedHash = createHash('sha256')
+      .update(refreshToken)
+      .digest('hex');
+
+    expect(authTokenService.hashRefreshToken(refreshToken)).toBe(expectedHash);
+  });
 });

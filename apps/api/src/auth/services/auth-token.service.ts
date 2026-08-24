@@ -39,9 +39,7 @@ export class AuthTokenService {
 
     const refreshToken = randomBytes(64).toString('base64url');
 
-    const refreshTokenHash = createHash('sha256')
-      .update(refreshToken)
-      .digest('hex');
+    const refreshTokenHash = this.hashRefreshToken(refreshToken);
 
     const refreshTokenExpiresAt = new Date(
       Date.now() + refreshTokenTtlSeconds * 1000,
@@ -53,5 +51,9 @@ export class AuthTokenService {
       refreshTokenHash,
       refreshTokenExpiresAt,
     };
+  }
+
+  hashRefreshToken(refreshToken: string): string {
+    return createHash('sha256').update(refreshToken).digest('hex');
   }
 }
