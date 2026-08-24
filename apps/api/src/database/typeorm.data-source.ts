@@ -12,6 +12,7 @@ const appDataSource = new DataSource({
   url: databaseUrl,
   synchronize: false,
   migrationsRun: false,
+  entities: [`${__dirname}/../**/*.entity{.ts,.js}`],
   migrations: [`${__dirname}/migrations/*{.ts,.js}`],
 });
 
