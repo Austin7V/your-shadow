@@ -4,6 +4,8 @@ import { User } from '../users/entities/user.entity';
 import { UserStatus } from '../users/enums/user-status.enum';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
+import { RefreshToken } from './entities/refresh-token.entity';
+import { AuthTokenService } from './services/auth-token.service';
 import { PasswordService } from './services/password.service';
 
 describe('AuthService', () => {
@@ -11,12 +13,23 @@ describe('AuthService', () => {
 
   const usersRepository = {
     existsBy: jest.fn(),
+    findOne: jest.fn(),
+    create: jest.fn(),
+    save: jest.fn(),
+  };
+
+  const refreshTokensRepository = {
     create: jest.fn(),
     save: jest.fn(),
   };
 
   const passwordService = {
     hash: jest.fn(),
+    verify: jest.fn(),
+  };
+
+  const authTokenService = {
+    issue: jest.fn(),
   };
 
   const registerDto: RegisterDto = {
@@ -30,7 +43,9 @@ describe('AuthService', () => {
 
     authService = new AuthService(
       usersRepository as unknown as Repository<User>,
+      refreshTokensRepository as unknown as Repository<RefreshToken>,
       passwordService as unknown as PasswordService,
+      authTokenService as unknown as AuthTokenService,
     );
   });
 

@@ -8,12 +8,17 @@ import request from 'supertest';
 import { UserStatus } from '../users/enums/user-status.enum';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { AuthCookieService } from './services/auth-cookie.service';
 
 describe('AuthController', () => {
   let app: INestApplication;
 
   const authService = {
     register: jest.fn(),
+  };
+
+  const authCookieService = {
+    setAuthenticationCookies: jest.fn(),
   };
 
   beforeAll(async () => {
@@ -23,6 +28,10 @@ describe('AuthController', () => {
         {
           provide: AuthService,
           useValue: authService,
+        },
+        {
+          provide: AuthCookieService,
+          useValue: authCookieService,
         },
       ],
     }).compile();

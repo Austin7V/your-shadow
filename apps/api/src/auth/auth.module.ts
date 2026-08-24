@@ -1,15 +1,35 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { RefreshToken } from './entities/refresh-token.entity';
+import { AuthCookieService } from './services/auth-cookie.service';
+import { AuthTokenService } from './services/auth-token.service';
 import { PasswordService } from './services/password.service';
 
 @Module({
-  imports: [ConfigModule, TypeOrmModule.forFeature([User, RefreshToken])],
+  imports: [
+    ConfigModule,
+
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.getOrThrow<string>('JWT_ACCESS_SECRET'),
+      }),
+    }),
+
+    TypeOrmModule.forFeature([User, RefreshToken]),
+  ],
   controllers: [AuthController],
-  providers: [AuthService, PasswordService],
+  providers: [
+    AuthService,
+    AuthCookieService,
+    AuthTokenService,
+    PasswordService,
+  ],
 })
 export class AuthModule {}
