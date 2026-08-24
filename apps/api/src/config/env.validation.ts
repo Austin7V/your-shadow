@@ -11,6 +11,12 @@ export const envValidationSchema = Joi.object({
 
   PORT: Joi.number().integer().min(1).max(65535).default(3000),
 
+  JWT_ACCESS_SECRET: Joi.string().min(32).required(),
+
+  JWT_ACCESS_TTL_SECONDS: Joi.number().integer().min(60).default(900),
+
+  REFRESH_TOKEN_TTL_SECONDS: Joi.number().integer().min(3600).default(2592000),
+
   ARGON2_MEMORY_COST: Joi.number().integer().min(19456).default(19456),
 
   ARGON2_TIME_COST: Joi.number().integer().min(2).default(2),
