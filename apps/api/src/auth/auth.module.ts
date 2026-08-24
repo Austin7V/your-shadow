@@ -9,6 +9,7 @@ import { RefreshToken } from './entities/refresh-token.entity';
 import { AuthCookieService } from './services/auth-cookie.service';
 import { AuthTokenService } from './services/auth-token.service';
 import { PasswordService } from './services/password.service';
+import { AuthSessionService } from './services/auth-session.service';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { PasswordService } from './services/password.service';
   providers: [
     AuthService,
     AuthCookieService,
+    AuthSessionService,
     AuthTokenService,
     PasswordService,
   ],

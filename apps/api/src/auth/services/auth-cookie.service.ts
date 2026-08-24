@@ -15,7 +15,7 @@ export class AuthCookieService {
     accessToken: string,
     refreshToken: string,
   ): void {
-    const secure = this.configService.get<string>('NODE_ENV') === 'production';
+    const sharedOptions = this.getSharedCookieOptions();
 
     const accessTokenMaxAge =
       this.configService.get<number>('JWT_ACCESS_TTL_SECONDS', 900) * 1000;
@@ -23,12 +23,6 @@ export class AuthCookieService {
     const refreshTokenMaxAge =
       this.configService.get<number>('REFRESH_TOKEN_TTL_SECONDS', 2592000) *
       1000;
-
-    const sharedOptions: CookieOptions = {
-      httpOnly: true,
-      secure,
-      sameSite: 'lax',
-    };
 
     response.cookie(ACCESS_TOKEN_COOKIE, accessToken, {
       ...sharedOptions,
@@ -41,5 +35,27 @@ export class AuthCookieService {
       path: '/auth',
       maxAge: refreshTokenMaxAge,
     });
+  }
+
+  clearAuthenticationCookies(response: Response): void {
+    const sharedOptions = this.getSharedCookieOptions();
+
+    response.clearCookie(ACCESS_TOKEN_COOKIE, {
+      ...sharedOptions,
+      path: '/',
+    });
+
+    response.clearCookie(REFRESH_TOKEN_COOKIE, {
+      ...sharedOptions,
+      path: '/auth',
+    });
+  }
+
+  private getSharedCookieOptions(): CookieOptions {
+    return {
+      httpOnly: true,
+      secure: this.configService.get<string>('NODE_ENV') === 'production',
+      sameSite: 'lax',
+    };
   }
 }

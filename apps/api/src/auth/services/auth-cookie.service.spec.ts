@@ -11,13 +11,16 @@ describe('AuthCookieService', () => {
   const refreshToken = 'random-refresh-token';
 
   let cookieMock: jest.Mock;
+  let clearCookieMock: jest.Mock;
   let response: Response;
 
   beforeEach(() => {
     cookieMock = jest.fn();
+    clearCookieMock = jest.fn();
 
     response = {
       cookie: cookieMock,
+      clearCookie: clearCookieMock,
     } as unknown as Response;
   });
 
@@ -99,5 +102,28 @@ describe('AuthCookieService', () => {
         sameSite: 'lax',
       }),
     );
+  });
+  it('clears authentication cookies', () => {
+    const configService = new ConfigService({
+      NODE_ENV: 'development',
+    });
+
+    const authCookieService = new AuthCookieService(configService);
+
+    authCookieService.clearAuthenticationCookies(response);
+
+    expect(clearCookieMock).toHaveBeenNthCalledWith(1, ACCESS_TOKEN_COOKIE, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/',
+    });
+
+    expect(clearCookieMock).toHaveBeenNthCalledWith(2, REFRESH_TOKEN_COOKIE, {
+      httpOnly: true,
+      secure: false,
+      sameSite: 'lax',
+      path: '/auth',
+    });
   });
 });
