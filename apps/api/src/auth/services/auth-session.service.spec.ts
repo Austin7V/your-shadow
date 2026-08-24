@@ -205,4 +205,11 @@ describe('AuthSessionService', () => {
 
     expect(refreshTokensRepository.save).not.toHaveBeenCalled();
   });
+  it('rejects refresh without a cookie', async () => {
+    await expect(authSessionService.refresh(undefined)).rejects.toThrow(
+      'Invalid or expired refresh token',
+    );
+
+    expect(authTokenService.hashRefreshToken).not.toHaveBeenCalled();
+  });
 });

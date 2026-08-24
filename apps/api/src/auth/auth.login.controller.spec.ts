@@ -14,6 +14,7 @@ import {
   AuthCookieService,
   REFRESH_TOKEN_COOKIE,
 } from './services/auth-cookie.service';
+import { AuthSessionService } from './services/auth-session.service';
 
 describe('AuthController login', () => {
   let app: INestApplication;
@@ -21,6 +22,11 @@ describe('AuthController login', () => {
   const authService = {
     register: jest.fn(),
     login: jest.fn(),
+  };
+
+  const authSessionService = {
+    refresh: jest.fn(),
+    logout: jest.fn(),
   };
 
   beforeAll(async () => {
@@ -38,6 +44,10 @@ describe('AuthController login', () => {
             JWT_ACCESS_TTL_SECONDS: 900,
             REFRESH_TOKEN_TTL_SECONDS: 2592000,
           }),
+        },
+        {
+          provide: AuthSessionService,
+          useValue: authSessionService,
         },
         AuthCookieService,
       ],

@@ -20,7 +20,13 @@ export class AuthSessionService {
     private readonly authTokenService: AuthTokenService,
   ) {}
 
-  async refresh(rawRefreshToken: string): Promise<RefreshedAuthTokens> {
+  async refresh(
+    rawRefreshToken: string | undefined,
+  ): Promise<RefreshedAuthTokens> {
+    if (!rawRefreshToken) {
+      throw new UnauthorizedException(INVALID_REFRESH_TOKEN_MESSAGE);
+    }
+
     const tokenHash = this.authTokenService.hashRefreshToken(rawRefreshToken);
 
     const storedRefreshToken = await this.refreshTokensRepository.findOne({

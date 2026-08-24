@@ -9,6 +9,7 @@ import { UserStatus } from '../users/enums/user-status.enum';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthCookieService } from './services/auth-cookie.service';
+import { AuthSessionService } from './services/auth-session.service';
 
 describe('AuthController', () => {
   let app: INestApplication;
@@ -19,6 +20,11 @@ describe('AuthController', () => {
 
   const authCookieService = {
     setAuthenticationCookies: jest.fn(),
+  };
+
+  const authSessionService = {
+    refresh: jest.fn(),
+    logout: jest.fn(),
   };
 
   beforeAll(async () => {
@@ -32,6 +38,10 @@ describe('AuthController', () => {
         {
           provide: AuthCookieService,
           useValue: authCookieService,
+        },
+        {
+          provide: AuthSessionService,
+          useValue: authSessionService,
         },
       ],
     }).compile();
