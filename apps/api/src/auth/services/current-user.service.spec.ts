@@ -1,6 +1,6 @@
 import { UnauthorizedException } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { User } from '../../users/entities/user.entity';
+import type { Repository } from 'typeorm';
+import type { User } from '../../users/entities/user.entity';
 import { UserStatus } from '../../users/enums/user-status.enum';
 import { CurrentUserService } from './current-user.service';
 
@@ -30,7 +30,7 @@ describe('CurrentUserService', () => {
       status: UserStatus.ACTIVE,
       createdAt,
       passwordHash: 'must-not-be-returned',
-    } as User);
+    });
 
     const result = await currentUserService.getById(userId);
 
