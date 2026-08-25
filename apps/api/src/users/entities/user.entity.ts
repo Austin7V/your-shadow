@@ -8,9 +8,11 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
+  OneToOne,
 } from 'typeorm';
 import { RefreshToken } from '../../auth/entities/refresh-token.entity';
 import { UserStatus } from '../enums/user-status.enum';
+import { Profile } from '../../profiles/entities/profile.entity';
 
 @Entity('users')
 @Index('UQ_users_email_normalized', ['emailNormalized'], {
@@ -47,6 +49,9 @@ export class User {
 
   @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
   refreshTokens!: RefreshToken[];
+
+  @OneToOne(() => Profile, (profile: Profile) => profile.user)
+  profile?: Profile;
 
   @CreateDateColumn({
     name: 'created_at',
