@@ -13,6 +13,7 @@ import {
 import { RefreshToken } from '../../auth/entities/refresh-token.entity';
 import { UserStatus } from '../enums/user-status.enum';
 import { Profile } from '../../profiles/entities/profile.entity';
+import { HealthConstraint } from '../../profiles/entities/health-constraint.entity';
 
 @Entity('users')
 @Index('UQ_users_email_normalized', ['emailNormalized'], {
@@ -52,6 +53,12 @@ export class User {
 
   @OneToOne(() => Profile, (profile: Profile) => profile.user)
   profile?: Profile;
+
+  @OneToMany(
+    () => HealthConstraint,
+    (healthConstraint: HealthConstraint) => healthConstraint.user,
+  )
+  healthConstraints!: HealthConstraint[];
 
   @CreateDateColumn({
     name: 'created_at',
