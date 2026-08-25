@@ -5,11 +5,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../users/entities/user.entity';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { CurrentUserController } from './current-user.controller';
 import { RefreshToken } from './entities/refresh-token.entity';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthCookieService } from './services/auth-cookie.service';
-import { AuthTokenService } from './services/auth-token.service';
-import { PasswordService } from './services/password.service';
 import { AuthSessionService } from './services/auth-session.service';
+import { AuthTokenService } from './services/auth-token.service';
+import { CurrentUserService } from './services/current-user.service';
+import { PasswordService } from './services/password.service';
 
 @Module({
   imports: [
@@ -25,12 +28,14 @@ import { AuthSessionService } from './services/auth-session.service';
 
     TypeOrmModule.forFeature([User, RefreshToken]),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, CurrentUserController],
   providers: [
     AuthService,
     AuthCookieService,
     AuthSessionService,
     AuthTokenService,
+    CurrentUserService,
+    JwtAuthGuard,
     PasswordService,
   ],
 })
