@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { envValidationSchema } from './config/env.validation';
 import { HealthController } from './health/health.controller';
 import { AuthModule } from './auth/auth.module';
+import { ProfilesModule } from './profiles/profiles.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { AuthModule } from './auth/auth.module';
     }),
     TerminusModule,
     AuthModule,
+    ProfilesModule,
   ],
   controllers: [AppController, HealthController],
   providers: [AppService],

@@ -5,6 +5,8 @@ const validEnvironment = {
   NODE_ENV: 'test',
   PORT: '3001',
   JWT_ACCESS_SECRET: 'test-access-secret-with-at-least-32-characters',
+  DATA_ENCRYPTION_KEY:
+    '0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef',
 };
 
 describe('envValidationSchema', () => {
@@ -65,5 +67,32 @@ describe('envValidationSchema', () => {
       JWT_ACCESS_TTL_SECONDS: 900,
       REFRESH_TOKEN_TTL_SECONDS: 2592000,
     });
+  });
+  it('rejects a missing data encryption key', () => {
+    // Create an otherwise valid environment without the encryption key.
+    const validationResult = envValidationSchema.validate({
+      ...validEnvironment,
+      DATA_ENCRYPTION_KEY: undefined,
+    });
+
+    // The application must refuse to start without the key.
+    expect(validationResult.error).toBeDefined();
+
+    // The error must identify the missing variable.
+    expect(validationResult.error?.message).toContain('DATA_ENCRYPTION_KEY');
+  });
+
+  it('rejects an invalid data encryption key', () => {
+    // Use a value that is neither hexadecimal nor 64 characters long.
+    const validationResult = envValidationSchema.validate({
+      ...validEnvironment,
+      DATA_ENCRYPTION_KEY: 'short-invalid-key',
+    });
+
+    // The invalid key must be rejected.
+    expect(validationResult.error).toBeDefined();
+
+    // The error must identify the incorrect variable.
+    expect(validationResult.error?.message).toContain('DATA_ENCRYPTION_KEY');
   });
 });
