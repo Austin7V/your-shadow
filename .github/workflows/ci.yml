@@ -33,6 +33,8 @@ jobs:
       NODE_ENV: test
       PORT: 3000
       DATABASE_URL: postgresql://your_shadow:your_shadow_local_password@localhost:5432/your_shadow
+      JWT_ACCESS_SECRET: ci-test-access-secret-with-at-least-32-characters
+      DATA_ENCRYPTION_KEY: 0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
 
     steps:
       - name: Check out repository
