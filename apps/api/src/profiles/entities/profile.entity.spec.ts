@@ -46,15 +46,12 @@ describe('Profile entity', () => {
   });
 
   it('allows only one profile per user', () => {
-    const userIdColumn = metadata.columns.find(
-      (column) => column.target === Profile && column.propertyName === 'userId',
+    const userRelation = getMetadataArgsStorage().relations.find(
+      (relation) =>
+        relation.target === Profile && relation.propertyName === 'user',
     );
 
-    expect(userIdColumn?.options).toMatchObject({
-      name: 'user_id',
-      type: 'uuid',
-      unique: true,
-    });
+    expect(userRelation?.relationType).toBe('one-to-one');
   });
 
   it('deletes the profile when its user is deleted', () => {
