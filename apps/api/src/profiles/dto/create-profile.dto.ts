@@ -10,6 +10,7 @@ import {
   MaxLength,
   Min,
   MinLength,
+  IsTimeZone,
 } from 'class-validator';
 import { ProfileGoal } from '../enums/profile-goal.enum';
 
@@ -61,6 +62,11 @@ export class CreateProfileDto {
   @Min(100)
   @Max(250)
   heightCm!: number;
+
+  @Transform(({ value }: TransformFnParams) => trimStringInput(value))
+  @IsString()
+  @IsTimeZone()
+  timezone!: string;
 
   @IsEnum(ProfileGoal)
   primaryGoal!: ProfileGoal;

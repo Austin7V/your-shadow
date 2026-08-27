@@ -11,6 +11,7 @@ import {
   Min,
   MinLength,
   ValidateIf,
+  IsTimeZone,
 } from 'class-validator';
 import { ProfileGoal } from '../enums/profile-goal.enum';
 
@@ -67,6 +68,12 @@ export class UpdateProfileDto {
   @Min(100)
   @Max(250)
   heightCm?: number;
+
+  @ValidateIf((_object, value) => value !== undefined)
+  @Transform(({ value }: TransformFnParams) => trimStringInput(value))
+  @IsString()
+  @IsTimeZone()
+  timezone?: string;
 
   @ValidateIf((_object, value) => value !== undefined)
   @IsEnum(ProfileGoal)

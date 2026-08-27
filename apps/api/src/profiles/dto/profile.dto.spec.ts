@@ -11,6 +11,7 @@ describe('profile DTOs', () => {
     userName: 'Sergey',
     dateOfBirth: '1993-07-31',
     heightCm: 184,
+    timezone: 'Europe/Berlin',
     primaryGoal: ProfileGoal.LOSE_WEIGHT,
     targetWeightKg: 95,
     lastDoctorVisitAt: null,
@@ -24,12 +25,13 @@ describe('profile DTOs', () => {
     expect(validationErrors).toHaveLength(0);
   });
 
-  it('trims profile names', async () => {
+  it('trims profile names and timezone', async () => {
     const dto = plainToInstance(CreateProfileDto, {
       ...validProfile,
       firstName: '  Sergey  ',
       lastName: '  Badin  ',
       userName: '  Sergey  ',
+      timezone: '  Europe/Berlin  ',
     });
 
     const validationErrors = await validate(dto);
@@ -38,6 +40,7 @@ describe('profile DTOs', () => {
     expect(dto.firstName).toBe('Sergey');
     expect(dto.lastName).toBe('Badin');
     expect(dto.userName).toBe('Sergey');
+    expect(dto.timezone).toBe('Europe/Berlin');
   });
 
   it('rejects an empty user name', async () => {
@@ -106,9 +109,30 @@ describe('profile DTOs', () => {
     expect(validationErrors).not.toHaveLength(0);
   });
 
+  it('rejects an invalid timezone', async () => {
+    const dto = plainToInstance(CreateProfileDto, {
+      ...validProfile,
+      timezone: 'Berlin',
+    });
+
+    const validationErrors = await validate(dto);
+
+    expect(validationErrors).not.toHaveLength(0);
+  });
+
   it('allows a partial profile update', async () => {
     const dto = plainToInstance(UpdateProfileDto, {
       userName: 'Shadow',
+    });
+
+    const validationErrors = await validate(dto);
+
+    expect(validationErrors).toHaveLength(0);
+  });
+
+  it('allows a valid timezone update', async () => {
+    const dto = plainToInstance(UpdateProfileDto, {
+      timezone: 'Europe/Kyiv',
     });
 
     const validationErrors = await validate(dto);
