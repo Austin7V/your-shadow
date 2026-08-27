@@ -7,6 +7,7 @@ export interface ProfileEncryptedData {
   readonly userName: string;
   readonly dateOfBirth: string;
   readonly heightCm: number;
+  readonly timezone: string;
   readonly primaryGoal: ProfileGoal;
   readonly targetWeightKg: number | null;
   readonly lastDoctorVisitAt: string | null;
