@@ -1,1 +1,8 @@
-export type { ApiMessage } from "@your-shadow/contracts";
+export type {
+  ApiMessage,
+  AuthUser,
+  LoginRequest,
+  LoginResponse,
+  RegisterRequest,
+  RegisterResponse,
+} from "@your-shadow/contracts";
