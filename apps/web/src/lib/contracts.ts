@@ -1,6 +1,7 @@
 export type {
   ApiMessage,
   AuthUser,
+  CurrentUserResponse,
   LoginRequest,
   LoginResponse,
   RegisterRequest,

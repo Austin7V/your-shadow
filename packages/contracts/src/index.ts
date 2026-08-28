@@ -26,3 +26,5 @@ export type LoginRequest = {
 };
 
 export type LoginResponse = AuthUser;
+
+export type CurrentUserResponse = AuthUser;
