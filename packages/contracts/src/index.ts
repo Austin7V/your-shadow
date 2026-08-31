@@ -55,3 +55,31 @@ export type CreateWeightEntryRequest = {
   weightKg: number;
   measuredAt?: string;
 };
+
+export const HEALTH_CONSTRAINT_TYPES = [
+  "chronic_condition",
+  "injury",
+  "allergy",
+  "mobility_limitation",
+  "medical_restriction",
+  "other",
+] as const;
+
+export type HealthConstraintType =
+    (typeof HEALTH_CONSTRAINT_TYPES)[number];
+
+export const HEALTH_CONSTRAINT_SEVERITIES = [
+  "low",
+  "moderate",
+  "high",
+] as const;
+
+export type HealthConstraintSeverity =
+    (typeof HEALTH_CONSTRAINT_SEVERITIES)[number];
+
+export type CreateHealthConstraintRequest = {
+  type: HealthConstraintType;
+  title: string;
+  notes: string | null;
+  severity: HealthConstraintSeverity;
+};
