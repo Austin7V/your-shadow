@@ -8,6 +8,7 @@ import { getAuthErrorMessage, loginUser } from "@/lib/api/auth-api";
 import { AuthCard } from "./auth-card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { getSafeReturnTo } from "@/lib/auth/get-safe-return-to";
 
 type LoginFormProps = {
   registrationCompleted: boolean;
@@ -76,7 +77,10 @@ export function LoginForm({ registrationCompleted }: LoginFormProps) {
         password,
       });
 
-      router.replace("/dashboard");
+      const searchParams = new URLSearchParams(window.location.search);
+      const returnTo = getSafeReturnTo(searchParams.get("returnTo"));
+
+      router.replace(returnTo);
       router.refresh();
     } catch (error: unknown) {
       setFormError(getAuthErrorMessage(error));
