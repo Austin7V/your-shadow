@@ -6,4 +6,9 @@ export type {
   LoginResponse,
   RegisterRequest,
   RegisterResponse,
+  CreateProfileRequest,
+  CreateWeightEntryRequest,
+  ProfileGoal,
 } from "@your-shadow/contracts";
+
+export { PROFILE_GOALS } from "@your-shadow/contracts";

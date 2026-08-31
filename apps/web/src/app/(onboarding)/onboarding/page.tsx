@@ -1,20 +1,26 @@
+import { PersonalDataForm } from "@/app/components/onboarding/personal-data-form";
+
 export default function OnboardingPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center p-6">
-      <section className="w-full max-w-xl rounded-lg border border-border bg-surface p-8 shadow-sm">
-        <p className="text-sm font-semibold tracking-[0.18em] text-primary uppercase">
-          Your Shadow
-        </p>
+    <main className="min-h-screen px-4 py-10 sm:px-6">
+      <div className="mx-auto w-full max-w-3xl">
+        <header className="mb-8">
+          <p className="text-sm font-semibold tracking-[0.18em] text-primary uppercase">
+            Step 1 of 2
+          </p>
 
-        <h1 className="mt-4 text-3xl font-bold">
-          Let&apos;s build your profile
-        </h1>
+          <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
+            Let&apos;s build your profile
+          </h1>
 
-        <p className="mt-3 leading-7 text-muted-foreground">
-          Your personal information and health preferences will be added in the
-          next onboarding steps.
-        </p>
-      </section>
+          <p className="mt-3 max-w-2xl leading-7 text-muted-foreground">
+            We use this information to adapt your goals, activity and daily
+            recommendations.
+          </p>
+        </header>
+
+        <PersonalDataForm />
+      </div>
     </main>
   );
 }
