@@ -9,3 +9,6 @@ coverage/
 
 *.log
 .DS_Store
+
+# JetBrains IDE settings
+.idea/
