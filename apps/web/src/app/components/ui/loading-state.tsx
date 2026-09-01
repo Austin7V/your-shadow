@@ -10,7 +10,7 @@ export function LoadingState({
   return (
     <div
       role="status"
-      className="flex flex-col items-center justify-center gap-3 rounded-lg border border-border bg-surface p-8 text-center"
+      className="motion-enter flex flex-col items-center justify-center gap-3 rounded-lg border border-border bg-surface p-8 text-center"
     >
       <LoaderCircle
         aria-hidden="true"

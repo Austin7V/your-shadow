@@ -7,7 +7,7 @@ type SafetyStateProps = {
 
 export function SafetyState({ title, description }: SafetyStateProps) {
   return (
-    <aside className="rounded-lg border border-safety bg-surface p-6">
+    <aside className="motion-enter rounded-lg border border-safety bg-surface p-6">
       <div className="flex gap-3">
         <ShieldAlert aria-hidden="true" className="mt-0.5 size-6 text-safety" />
 

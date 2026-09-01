@@ -15,7 +15,7 @@ export function EmptyState({
   actionLabel,
 }: EmptyStateProps) {
   return (
-    <div className="rounded-lg border border-dashed border-border bg-surface p-8 text-center">
+    <div className="motion-enter rounded-lg border border-dashed border-border bg-surface p-8 text-center">
       <Inbox aria-hidden="true" className="mx-auto size-8 text-primary" />
 
       <h2 className="mt-4 text-lg font-semibold">{title}</h2>

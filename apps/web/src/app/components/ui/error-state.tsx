@@ -19,7 +19,7 @@ export function ErrorState({
   return (
     <div
       role="alert"
-      className="rounded-lg border border-error bg-surface p-6 text-center"
+      className="motion-enter rounded-lg border border-error bg-surface p-6 text-center"
     >
       <CircleAlert aria-hidden="true" className="mx-auto size-8 text-error" />
 
