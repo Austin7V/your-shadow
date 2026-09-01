@@ -83,3 +83,42 @@ export type CreateHealthConstraintRequest = {
   notes: string | null;
   severity: HealthConstraintSeverity;
 };
+
+export type ProfileResponse = CreateProfileRequest & {
+  id: string;
+  onboardingCompletedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type UpdateProfileRequest = Partial<
+    Pick<
+        CreateProfileRequest,
+        | "heightCm"
+        | "timezone"
+        | "primaryGoal"
+        | "targetWeightKg"
+    >
+>;
+
+export type WeightEntryResponse = {
+  id: string;
+  weightKg: number;
+  measuredAt: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type HealthConstraintResponse =
+    CreateHealthConstraintRequest & {
+  id: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type UpdateHealthConstraintRequest = Partial<
+    CreateHealthConstraintRequest
+> & {
+  isActive?: boolean;
+};
