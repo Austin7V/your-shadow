@@ -4,6 +4,7 @@ import {
   CalendarDays,
   ChartNoAxesCombined,
   Dumbbell,
+  Sparkles,
   type LucideIcon,
   UserRound,
   Utensils,
@@ -11,73 +12,258 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-type NavigationItem = {
-  href: string;
-  label: string;
-  icon: LucideIcon;
+type NavigationVariant = "mobile" | "rail" | "sidebar";
+
+type NavigationItem =
+  | {
+      href: string;
+      label: string;
+      icon: LucideIcon;
+      available: true;
+    }
+  | {
+      label: string;
+      icon: LucideIcon;
+      available: false;
+    };
+
+type ApplicationNavigationProps = {
+  variant: NavigationVariant;
 };
 
-const navigationItems: NavigationItem[] = [
-  { href: "/dashboard", label: "Today", icon: CalendarDays },
-  { href: "/meals", label: "Meals", icon: Utensils },
-  { href: "/workout", label: "Workout", icon: Dumbbell },
-  { href: "/history", label: "History", icon: ChartNoAxesCombined },
-  { href: "/account", label: "Profile", icon: UserRound },
+const todayNavigationItem = {
+  href: "/dashboard",
+  label: "Today",
+  icon: CalendarDays,
+  available: true,
+} satisfies NavigationItem;
+
+const mealsNavigationItem = {
+  href: "/meals",
+  label: "Meals",
+  icon: Utensils,
+  available: true,
+} satisfies NavigationItem;
+
+const workoutNavigationItem = {
+  href: "/workout",
+  label: "Workout",
+  icon: Dumbbell,
+  available: true,
+} satisfies NavigationItem;
+
+const askShadowNavigationItem = {
+  label: "Ask Shadow",
+  icon: Sparkles,
+  available: false,
+} satisfies NavigationItem;
+
+const historyNavigationItem = {
+  href: "/history",
+  label: "History",
+  icon: ChartNoAxesCombined,
+  available: true,
+} satisfies NavigationItem;
+
+const profileNavigationItem = {
+  href: "/account",
+  label: "Profile",
+  icon: UserRound,
+  available: true,
+} satisfies NavigationItem;
+
+const applicationNavigationItems: NavigationItem[] = [
+  todayNavigationItem,
+  mealsNavigationItem,
+  workoutNavigationItem,
+  askShadowNavigationItem,
+  historyNavigationItem,
+  profileNavigationItem,
 ];
 
-export function ApplicationNavigation() {
-  const pathname = usePathname();
+const mobileNavigationItems: NavigationItem[] = [
+  todayNavigationItem,
+  mealsNavigationItem,
+  askShadowNavigationItem,
+  workoutNavigationItem,
+  historyNavigationItem,
+];
+
+const isCurrentRoute = (pathname: string, href: string): boolean => {
+  return pathname === href || pathname.startsWith(`${href}/`);
+};
+
+function UnavailableNavigationItem({
+  item,
+  variant,
+}: {
+  item: Extract<NavigationItem, { available: false }>;
+  variant: NavigationVariant;
+}) {
+  const Icon = item.icon;
+
+  if (variant === "mobile") {
+    return (
+      <button
+        type="button"
+        aria-disabled="true"
+        aria-label="Ask Shadow. Coming soon."
+        title="Ask Shadow is coming soon"
+        className="group relative flex min-h-[4.5rem] min-w-0 cursor-not-allowed flex-col items-center justify-center gap-1 px-1 text-xs font-medium text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+      >
+        <span className="relative -mt-5 inline-flex size-12 items-center justify-center rounded-full border border-border bg-surface-raised shadow-md">
+          <span className="absolute inset-1 rounded-full bg-[radial-gradient(circle_at_35%_30%,var(--surface-raised),var(--primary)_42%,var(--analytics))] opacity-70" />
+          <Icon
+            aria-hidden="true"
+            className="relative size-5 text-primary-foreground"
+            strokeWidth={2}
+          />
+        </span>
+        <span className="max-w-full truncate">{item.label}</span>
+      </button>
+    );
+  }
+
+  if (variant === "rail") {
+    return (
+      <button
+        type="button"
+        aria-disabled="true"
+        aria-label="Ask Shadow. Coming soon."
+        title="Ask Shadow is coming soon"
+        className="flex min-h-14 w-full cursor-not-allowed flex-col items-center justify-center gap-1 rounded-control px-1 text-[0.75rem] font-medium text-muted-foreground opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      >
+        <span className="inline-flex size-7 items-center justify-center rounded-full bg-[radial-gradient(circle_at_35%_30%,var(--surface-raised),var(--primary)_42%,var(--analytics))]">
+          <Icon
+            aria-hidden="true"
+            className="size-4 text-primary-foreground"
+            strokeWidth={2}
+          />
+        </span>
+        <span>{item.label}</span>
+      </button>
+    );
+  }
 
   return (
-    <>
-      <nav aria-label="Primary navigation" className="hidden xl:flex xl:gap-1">
-        {navigationItems.map((item) => {
-          const isActive = pathname === item.href;
+    <button
+      type="button"
+      aria-disabled="true"
+      aria-label="Ask Shadow. Coming soon."
+      className="flex min-h-11 w-full cursor-not-allowed items-center gap-3 rounded-control px-3 text-left text-sm font-medium text-muted-foreground opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+    >
+      <span className="inline-flex size-7 items-center justify-center rounded-full bg-[radial-gradient(circle_at_35%_30%,var(--surface-raised),var(--primary)_42%,var(--analytics))]">
+        <Icon
+          aria-hidden="true"
+          className="size-4 text-primary-foreground"
+          strokeWidth={2}
+        />
+      </span>
+      <span>{item.label}</span>
+      <span className="ml-auto rounded-compact border border-border px-2 py-0.5 text-xs">
+        Soon
+      </span>
+    </button>
+  );
+}
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={isActive ? "page" : undefined}
-              className={
-                isActive
-                  ? "rounded-md bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground"
-                  : "rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
-              }
-            >
-              {item.label}
-            </Link>
-          );
-        })}
-      </nav>
+function AvailableNavigationItem({
+  item,
+  pathname,
+  variant,
+}: {
+  item: Extract<NavigationItem, { available: true }>;
+  pathname: string;
+  variant: NavigationVariant;
+}) {
+  const Icon = item.icon;
+  const isActive = isCurrentRoute(pathname, item.href);
 
-      <nav
-        aria-label="Mobile primary navigation"
-        className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-surface xl:hidden"
+  if (variant === "mobile") {
+    return (
+      <Link
+        href={item.href}
+        aria-current={isActive ? "page" : undefined}
+        className={`flex min-h-[4.5rem] min-w-0 flex-col items-center justify-center gap-1 px-1 text-xs transition-colors duration-control focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring ${
+          isActive
+            ? "font-semibold text-primary"
+            : "font-medium text-muted-foreground hover:text-foreground"
+        }`}
       >
-        <div className="mx-auto grid max-w-md grid-cols-5">
-          {navigationItems.map((item) => {
-            const Icon = item.icon;
-            const isActive = pathname === item.href;
+        <Icon aria-hidden="true" className="size-5" strokeWidth={2} />
+        <span className="max-w-full truncate">{item.label}</span>
+      </Link>
+    );
+  }
 
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={isActive ? "page" : undefined}
-                className={
-                  isActive
-                    ? "flex min-h-16 flex-col items-center justify-center gap-1 text-xs font-semibold text-primary"
-                    : "flex min-h-16 flex-col items-center justify-center gap-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
-                }
-              >
-                <Icon aria-hidden="true" size={20} strokeWidth={2} />
-                <span>{item.label}</span>
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
-    </>
+  if (variant === "rail") {
+    return (
+      <Link
+        href={item.href}
+        aria-current={isActive ? "page" : undefined}
+        title={item.label}
+        className={`flex min-h-14 w-full flex-col items-center justify-center gap-1 rounded-control px-1 text-[0.75rem] transition-colors duration-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${
+          isActive
+            ? "bg-primary text-primary-foreground"
+            : "text-muted-foreground hover:bg-surface-muted hover:text-foreground"
+        }`}
+      >
+        <Icon aria-hidden="true" className="size-5" strokeWidth={2} />
+        <span>{item.label}</span>
+      </Link>
+    );
+  }
+
+  return (
+    <Link
+      href={item.href}
+      aria-current={isActive ? "page" : undefined}
+      className={`flex min-h-11 w-full items-center gap-3 rounded-control px-3 text-sm transition-colors duration-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${
+        isActive
+          ? "bg-primary font-semibold text-primary-foreground"
+          : "font-medium text-muted-foreground hover:bg-surface-muted hover:text-foreground"
+      }`}
+    >
+      <Icon aria-hidden="true" className="size-5" strokeWidth={2} />
+      <span>{item.label}</span>
+    </Link>
+  );
+}
+
+export function ApplicationNavigation({
+  variant,
+}: ApplicationNavigationProps) {
+  const pathname = usePathname();
+  const items =
+    variant === "mobile"
+      ? mobileNavigationItems
+      : applicationNavigationItems;
+
+  return (
+    <nav
+      aria-label={
+        variant === "mobile"
+          ? "Mobile primary navigation"
+          : "Primary navigation"
+      }
+      className={variant === "mobile" ? "grid grid-cols-5" : "space-y-1"}
+    >
+      {items.map((item) =>
+        item.available ? (
+          <AvailableNavigationItem
+            key={item.href}
+            item={item}
+            pathname={pathname}
+            variant={variant}
+          />
+        ) : (
+          <UnavailableNavigationItem
+            key={item.label}
+            item={item}
+            variant={variant}
+          />
+        ),
+      )}
+    </nav>
   );
 }
