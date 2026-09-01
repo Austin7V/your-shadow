@@ -1,10 +1,8 @@
 "use client";
 
-import {
-  useState,
-  type FormEvent,
-} from "react";
+import { ArrowRight, ClipboardCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState, type FormEvent } from "react";
 import { Button } from "@/app/components/ui/button";
 import { FormSection } from "@/app/components/ui/form-section";
 import { Input } from "@/app/components/ui/input";
@@ -25,18 +23,15 @@ import {
 export function PersonalDataForm() {
   const router = useRouter();
 
-  const [draft, setDraft] = useState<PersonalDataDraft>(
-      () => {
-        if (typeof window === "undefined") {
-          return createEmptyPersonalDataDraft();
-        }
+  const [draft, setDraft] = useState<PersonalDataDraft>(() => {
+    if (typeof window === "undefined") {
+      return createEmptyPersonalDataDraft();
+    }
 
-        return loadPersonalDataDraft();
-      },
-  );
+    return loadPersonalDataDraft();
+  });
 
-  const [errors, setErrors] =
-      useState<PersonalDataErrors>({});
+  const [errors, setErrors] = useState<PersonalDataErrors>({});
 
   const updateField = <TField extends keyof PersonalDataDraft>(
     field: TField,
@@ -72,8 +67,8 @@ export function PersonalDataForm() {
   return (
     <form className="space-y-6" onSubmit={handleSubmit} noValidate>
       <FormSection
-        title="Personal information"
-        description="Tell us a little about yourself so Your Shadow can prepare suitable daily guidance."
+        title="Personal details"
+        description="Use the information you are comfortable seeing in your account and daily experience."
       >
         <div className="grid gap-5 sm:grid-cols-2">
           <Input
@@ -83,7 +78,6 @@ export function PersonalDataForm() {
             maxLength={100}
             value={draft.firstName}
             error={errors.firstName}
-            
             onChange={(event) => updateField("firstName", event.target.value)}
           />
 
@@ -94,7 +88,6 @@ export function PersonalDataForm() {
             maxLength={100}
             value={draft.lastName}
             error={errors.lastName}
-            
             onChange={(event) => updateField("lastName", event.target.value)}
           />
         </div>
@@ -107,7 +100,6 @@ export function PersonalDataForm() {
           value={draft.userName}
           error={errors.userName}
           hint="This is the name Your Shadow will use when speaking to you."
-          
           onChange={(event) => updateField("userName", event.target.value)}
         />
 
@@ -118,10 +110,45 @@ export function PersonalDataForm() {
             type="date"
             value={draft.dateOfBirth}
             error={errors.dateOfBirth}
-            
             onChange={(event) => updateField("dateOfBirth", event.target.value)}
           />
 
+          <Input
+            label="Time zone"
+            name="timezone"
+            value={draft.timezone}
+            error={errors.timezone}
+            hint="Detected automatically. You can change it if necessary."
+            onChange={(event) => updateField("timezone", event.target.value)}
+          />
+        </div>
+      </FormSection>
+
+      <FormSection
+        title="Your primary goal"
+        description="Choose the direction that matters most right now. This becomes the starting context for your plan."
+        variant="muted"
+      >
+        <Select
+          label="Primary goal"
+          name="primaryGoal"
+          value={draft.primaryGoal}
+          options={profileGoalOptions}
+          error={errors.primaryGoal}
+          onChange={(event) =>
+            updateField(
+              "primaryGoal",
+              event.target.value as PersonalDataDraft["primaryGoal"],
+            )
+          }
+        />
+      </FormSection>
+
+      <FormSection
+        title="Starting measurements"
+        description="These measurements establish your baseline. Target weight is optional."
+      >
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           <Input
             label="Height"
             name="heightCm"
@@ -132,43 +159,10 @@ export function PersonalDataForm() {
             step={0.1}
             value={draft.heightCm}
             error={errors.heightCm}
-            hint="Enter your height in centimetres."
-            
+            hint="Centimetres"
             onChange={(event) => updateField("heightCm", event.target.value)}
           />
-        </div>
 
-        <Input
-          label="Time zone"
-          name="timezone"
-          value={draft.timezone}
-          error={errors.timezone}
-          hint="Detected automatically. You can change it if necessary."
-          
-          onChange={(event) => updateField("timezone", event.target.value)}
-        />
-      </FormSection>
-
-      <FormSection
-        title="Your goal"
-        description="These values help us personalise your starting plan."
-      >
-        <Select
-            label="Primary goal"
-            name="primaryGoal"
-            value={draft.primaryGoal}
-            options={profileGoalOptions}
-            error={errors.primaryGoal}
-            onChange={(event) =>
-                updateField(
-                    "primaryGoal",
-                    event.target
-                        .value as PersonalDataDraft["primaryGoal"],
-                )
-            }
-        />
-
-        <div className="grid gap-5 sm:grid-cols-2">
           <Input
             label="Current weight"
             name="currentWeightKg"
@@ -179,8 +173,7 @@ export function PersonalDataForm() {
             step={0.01}
             value={draft.currentWeightKg}
             error={errors.currentWeightKg}
-            hint="Enter your current weight in kilograms."
-            
+            hint="Kilograms"
             onChange={(event) =>
               updateField("currentWeightKg", event.target.value)
             }
@@ -196,8 +189,7 @@ export function PersonalDataForm() {
             step={0.01}
             value={draft.targetWeightKg}
             error={errors.targetWeightKg}
-            hint="Optional. Enter your target in kilograms."
-            
+            hint="Optional, in kilograms"
             onChange={(event) =>
               updateField("targetWeightKg", event.target.value)
             }
@@ -205,13 +197,26 @@ export function PersonalDataForm() {
         </div>
       </FormSection>
 
-      <div className="flex justify-end">
-        <Button
-          type="submit"
-          className="w-full sm:w-auto sm:min-w-40"
-          
-        >
+      <div className="flex flex-col gap-5 rounded-card border border-border bg-surface p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-6">
+        <div className="flex items-start gap-3">
+          <span
+            aria-hidden="true"
+            className="inline-flex size-11 shrink-0 items-center justify-center rounded-control bg-primary/10 text-primary"
+          >
+            <ClipboardCheck className="size-5" strokeWidth={2} />
+          </span>
+          <div>
+            <p className="font-semibold text-foreground">Next: health and consent</p>
+            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+              Review health context and required confirmations before your
+              profile is created.
+            </p>
+          </div>
+        </div>
+
+        <Button type="submit" className="w-full shrink-0 sm:w-auto sm:min-w-40">
           Continue
+          <ArrowRight aria-hidden="true" className="size-4" strokeWidth={2} />
         </Button>
       </div>
     </form>
