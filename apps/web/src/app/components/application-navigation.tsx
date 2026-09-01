@@ -4,13 +4,13 @@ import {
   CalendarDays,
   ChartNoAxesCombined,
   Dumbbell,
-  Sparkles,
   type LucideIcon,
   UserRound,
   Utensils,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ShadowOrb } from "@/app/components/shadow/shadow-orb";
 
 type NavigationVariant = "mobile" | "rail" | "sidebar";
 
@@ -23,7 +23,6 @@ type NavigationItem =
     }
   | {
       label: string;
-      icon: LucideIcon;
       available: false;
     };
 
@@ -54,7 +53,6 @@ const workoutNavigationItem = {
 
 const askShadowNavigationItem = {
   label: "Ask Shadow",
-  icon: Sparkles,
   available: false,
 } satisfies NavigationItem;
 
@@ -100,8 +98,6 @@ function UnavailableNavigationItem({
   item: Extract<NavigationItem, { available: false }>;
   variant: NavigationVariant;
 }) {
-  const Icon = item.icon;
-
   if (variant === "mobile") {
     return (
       <button
@@ -112,12 +108,7 @@ function UnavailableNavigationItem({
         className="group relative flex min-h-[4.5rem] min-w-0 cursor-not-allowed flex-col items-center justify-center gap-1 px-1 text-xs font-medium text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
       >
         <span className="relative -mt-5 inline-flex size-12 items-center justify-center rounded-full border border-border bg-surface-raised shadow-md">
-          <span className="absolute inset-1 rounded-full bg-[radial-gradient(circle_at_35%_30%,var(--surface-raised),var(--primary)_42%,var(--analytics))] opacity-70" />
-          <Icon
-            aria-hidden="true"
-            className="relative size-5 text-primary-foreground"
-            strokeWidth={2}
-          />
+          <ShadowOrb state="offline" size="compact" />
         </span>
         <span className="max-w-full truncate">{item.label}</span>
       </button>
@@ -133,13 +124,7 @@ function UnavailableNavigationItem({
         title="Ask Shadow is coming soon"
         className="flex min-h-14 w-full cursor-not-allowed flex-col items-center justify-center gap-1 rounded-control px-1 text-[0.75rem] font-medium text-muted-foreground opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
       >
-        <span className="inline-flex size-7 items-center justify-center rounded-full bg-[radial-gradient(circle_at_35%_30%,var(--surface-raised),var(--primary)_42%,var(--analytics))]">
-          <Icon
-            aria-hidden="true"
-            className="size-4 text-primary-foreground"
-            strokeWidth={2}
-          />
-        </span>
+        <ShadowOrb state="offline" size="compact" />
         <span>{item.label}</span>
       </button>
     );
@@ -152,13 +137,7 @@ function UnavailableNavigationItem({
       aria-label="Ask Shadow. Coming soon."
       className="flex min-h-11 w-full cursor-not-allowed items-center gap-3 rounded-control px-3 text-left text-sm font-medium text-muted-foreground opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
-      <span className="inline-flex size-7 items-center justify-center rounded-full bg-[radial-gradient(circle_at_35%_30%,var(--surface-raised),var(--primary)_42%,var(--analytics))]">
-        <Icon
-          aria-hidden="true"
-          className="size-4 text-primary-foreground"
-          strokeWidth={2}
-        />
-      </span>
+      <ShadowOrb state="offline" size="compact" />
       <span>{item.label}</span>
       <span className="ml-auto rounded-compact border border-border px-2 py-0.5 text-xs">
         Soon

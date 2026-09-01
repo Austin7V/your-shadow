@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { useSWRConfig } from "swr";
 import { ApplicationNavigation } from "@/app/components/application-navigation";
+import { ShadowOrb } from "@/app/components/shadow/shadow-orb";
 import { ThemeMenu } from "@/app/components/theme/theme-switcher";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { getAuthErrorMessage, logoutUser } from "@/lib/api/auth-api";
@@ -14,18 +15,8 @@ type ApplicationShellProps = {
   children: ReactNode;
 };
 
-function BrandMark({ compact = false }: { compact?: boolean }) {
-  return (
-    <span
-      aria-hidden="true"
-      className={`relative inline-flex shrink-0 items-center justify-center rounded-full border border-border bg-surface-raised ${
-        compact ? "size-9" : "size-10"
-      }`}
-    >
-      <span className="absolute inset-1 rounded-full bg-[radial-gradient(circle_at_35%_30%,var(--surface-raised),var(--primary)_42%,var(--analytics))]" />
-      <span className="relative size-2 rounded-full bg-primary-foreground/90" />
-    </span>
-  );
+function BrandMark() {
+  return <ShadowOrb state="idle" size="compact" />;
 }
 
 function BrandLink({ compact = false }: { compact?: boolean }) {
@@ -35,7 +26,7 @@ function BrandLink({ compact = false }: { compact?: boolean }) {
       aria-label="Your Shadow Today"
       className="inline-flex min-h-11 items-center gap-3 rounded-control font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
-      <BrandMark compact={compact} />
+      <BrandMark />
       {compact ? null : <span>Your Shadow</span>}
     </Link>
   );
@@ -129,7 +120,7 @@ export function ApplicationShell({ children }: ApplicationShellProps) {
                 aria-label="Your Shadow Today"
                 className="inline-flex min-h-11 items-center gap-2 rounded-control font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
-                <BrandMark compact />
+                <BrandMark />
                 <span className="hidden sm:inline">Your Shadow</span>
               </Link>
             </div>

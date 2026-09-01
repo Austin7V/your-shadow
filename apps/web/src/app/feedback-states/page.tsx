@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ShadowCompanionShowcase } from "@/app/components/shadow/shadow-companion-showcase";
 import { EmptyState } from "@/app/components/ui/empty-state";
 import { ErrorState } from "@/app/components/ui/error-state";
 import { LoadingState } from "@/app/components/ui/loading-state";
@@ -81,6 +82,8 @@ export default function FeedbackStatesPage() {
           Completion reactions are brief and do not change layout.
         </div>
       </section>
+
+      <ShadowCompanionShowcase />
     </main>
   );
 }
