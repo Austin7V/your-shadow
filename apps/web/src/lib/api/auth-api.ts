@@ -1,5 +1,6 @@
 import type {
   CurrentUserResponse,
+  DeleteAccountRequest,
   LoginRequest,
   LoginResponse,
   RegisterRequest,
@@ -12,8 +13,8 @@ type ApiErrorBody = {
 
 export class ApiRequestError extends Error {
   constructor(
-    message: string,
-    readonly statusCode: number,
+      message: string,
+      readonly statusCode: number,
   ) {
     super(message);
     this.name = "ApiRequestError";
@@ -33,7 +34,7 @@ const getApiErrorMessage = (body: unknown): string => {
 
   if (Array.isArray(message)) {
     const messages = message.filter(
-      (value): value is string => typeof value === "string",
+        (value): value is string => typeof value === "string",
     );
 
     if (messages.length > 0) {
@@ -61,8 +62,8 @@ const assertSuccessfulResponse = async (response: Response): Promise<void> => {
 };
 
 const postJson = async <TResponse, TBody>(
-  path: string,
-  body: TBody,
+    path: string,
+    body: TBody,
 ): Promise<TResponse> => {
   const response = await fetch(`/api${path}`, {
     method: "POST",
@@ -98,8 +99,24 @@ const postWithoutResponse = async (path: string): Promise<void> => {
   await assertSuccessfulResponse(response);
 };
 
+const deleteJsonWithoutResponse = async <TBody>(
+    path: string,
+    body: TBody,
+): Promise<void> => {
+  const response = await fetch(`/api${path}`, {
+    method: "DELETE",
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+
+  await assertSuccessfulResponse(response);
+};
+
 export const registerUser = (
-  request: RegisterRequest,
+    request: RegisterRequest,
 ): Promise<RegisterResponse> => {
   return postJson<RegisterResponse, RegisterRequest>("/auth/register", request);
 };
@@ -116,20 +133,29 @@ export const refreshSession = (): Promise<void> => {
   return postWithoutResponse("/auth/refresh");
 };
 
+export const deleteCurrentAccount = (
+    request: DeleteAccountRequest,
+): Promise<void> => {
+  return deleteJsonWithoutResponse<DeleteAccountRequest>(
+      "/auth/account",
+      request,
+  );
+};
+
 export const getCurrentUserWithRefresh =
-  async (): Promise<CurrentUserResponse> => {
-    try {
-      return await getCurrentUser();
-    } catch (error: unknown) {
-      if (!(error instanceof ApiRequestError) || error.statusCode !== 401) {
-        throw error;
+    async (): Promise<CurrentUserResponse> => {
+      try {
+        return await getCurrentUser();
+      } catch (error: unknown) {
+        if (!(error instanceof ApiRequestError) || error.statusCode !== 401) {
+          throw error;
+        }
+
+        await refreshSession();
+
+        return getCurrentUser();
       }
-
-      await refreshSession();
-
-      return getCurrentUser();
-    }
-  };
+    };
 
 export const getAuthErrorMessage = (error: unknown): string => {
   if (error instanceof ApiRequestError) {

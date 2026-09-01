@@ -29,6 +29,11 @@ export type LoginResponse = AuthUser;
 
 export type CurrentUserResponse = AuthUser;
 
+export type DeleteAccountRequest = {
+  password: string;
+  confirmation: string;
+};
+
 export const PROFILE_GOALS = [
   "lose_weight",
   "gain_weight",
