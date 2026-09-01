@@ -1,25 +1,53 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { useId, type ReactNode } from "react";
+
+type FormSectionVariant = "default" | "muted";
 
 type FormSectionProps = {
   title: string;
   description?: string;
+  actions?: ReactNode;
   children: ReactNode;
+  variant?: FormSectionVariant;
+  className?: string;
+};
+
+const variantClasses: Record<FormSectionVariant, string> = {
+  default: "bg-surface shadow-sm",
+  muted: "bg-surface-muted",
 };
 
 export function FormSection({
   title,
   description,
+  actions,
   children,
+  variant = "default",
+  className,
 }: FormSectionProps) {
-  return (
-    <section className="motion-enter rounded-lg border border-border bg-surface p-6 shadow-sm">
-      <div>
-        <h2 className="text-lg font-semibold">{title}</h2>
+  const titleId = useId();
 
-        {description ? (
-          <p className="mt-1 text-sm leading-6 text-muted-foreground">
-            {description}
-          </p>
+  return (
+    <section
+      aria-labelledby={titleId}
+      className={`motion-enter rounded-card border border-border p-5 sm:p-6 ${variantClasses[variant]} ${className ?? ""}`}
+    >
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h2 id={titleId} className="text-xl font-semibold text-foreground">
+            {title}
+          </h2>
+
+          {description ? (
+            <p className="mt-1.5 max-w-2xl text-sm leading-6 text-muted-foreground">
+              {description}
+            </p>
+          ) : null}
+        </div>
+
+        {actions ? (
+          <div className="flex shrink-0 flex-wrap gap-2">{actions}</div>
         ) : null}
       </div>
 

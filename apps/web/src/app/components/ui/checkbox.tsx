@@ -1,7 +1,12 @@
-import type { InputHTMLAttributes } from "react";
+"use client";
+
+import { useId, type InputHTMLAttributes } from "react";
 import { FieldMessage } from "./field-message";
 
-type CheckboxProps = Omit<InputHTMLAttributes<HTMLInputElement>, "type"> & {
+type CheckboxProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "type" | "readOnly"
+> & {
   label: string;
   error?: string;
   hint?: string;
@@ -15,27 +20,39 @@ export function Checkbox({
   disabled,
   ...props
 }: CheckboxProps) {
-  const fieldId = id ?? label.toLowerCase().replaceAll(" ", "-");
+  const generatedId = useId();
+  const fieldId = id ?? generatedId;
   const messageId = `${fieldId}-message`;
+  const hasMessage = Boolean(error || hint);
 
   return (
-    <div>
-      <label className="flex cursor-pointer items-start gap-3">
+    <div className="w-full">
+      <label
+        className={`flex min-h-11 items-start gap-3 rounded-control py-2 text-foreground ${
+          disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer"
+        }`}
+      >
         <input
           id={fieldId}
           type="checkbox"
           disabled={disabled}
-          aria-invalid={Boolean(error)}
-          aria-describedby={error || hint ? messageId : undefined}
-          className="mt-0.5 size-4 rounded border-border accent-primary focus:outline-2 focus:outline-offset-2 focus:outline-ring disabled:cursor-not-allowed disabled:opacity-50"
+          aria-invalid={error ? true : undefined}
+          aria-describedby={hasMessage ? messageId : undefined}
+          className={`mt-0.5 size-5 shrink-0 rounded-compact border bg-surface accent-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:cursor-not-allowed ${
+            error ? "border-error" : "border-border"
+          }`}
           {...props}
         />
 
         <span className="text-sm leading-6">{label}</span>
       </label>
 
-      <div id={messageId} className="ml-7">
-        <FieldMessage error={error} hint={hint} />
+      <div className="ml-8">
+        <FieldMessage
+          id={hasMessage ? messageId : undefined}
+          error={error}
+          hint={hint}
+        />
       </div>
     </div>
   );
