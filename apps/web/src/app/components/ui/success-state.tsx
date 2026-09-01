@@ -1,23 +1,22 @@
-import { ShieldAlert } from "lucide-react";
+import { CircleCheck } from "lucide-react";
 import type { ReactNode } from "react";
 import { FeedbackState } from "./feedback-state";
 
-type SafetyStateProps = {
+type SuccessStateProps = {
   title: string;
   description: string;
   action?: ReactNode;
 };
 
-export function SafetyState({
+export function SuccessState({
   title,
   description,
   action,
-}: SafetyStateProps) {
+}: SuccessStateProps) {
   return (
     <FeedbackState
-      tone="safety"
-      role="note"
-      icon={ShieldAlert}
+      tone="success"
+      icon={CircleCheck}
       title={title}
       description={description}
       action={action}
