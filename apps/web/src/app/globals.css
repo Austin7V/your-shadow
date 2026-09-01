@@ -188,6 +188,10 @@ textarea {
   animation: shadow-enter var(--duration-enter) ease-out both;
 }
 
+.motion-delay-1 {
+  animation-delay: var(--duration-instant);
+}
+
 .motion-press {
   transition-duration: var(--duration-control);
   transition-property: background-color, border-color, color, transform;
