@@ -44,7 +44,7 @@ export function Checkbox({
           {...props}
         />
 
-        <span className="text-sm leading-6">{label}</span>
+        <span className="text-base leading-6">{label}</span>
       </label>
 
       <div className="ml-8">
