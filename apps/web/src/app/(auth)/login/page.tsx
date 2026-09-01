@@ -3,7 +3,7 @@ import { LoginForm } from "@/app/components/auth/login-form";
 
 export const metadata: Metadata = {
   title: "Log in",
-  description: "Log in to your Your Shadow account.",
+  description: "Log in to continue with Your Shadow.",
 };
 
 type LoginPageProps = {

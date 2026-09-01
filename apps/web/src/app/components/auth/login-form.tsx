@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { CircleAlert, CircleCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { FormEvent } from "react";
@@ -8,6 +9,7 @@ import { getAuthErrorMessage, loginUser } from "@/lib/api/auth-api";
 import { AuthCard } from "./auth-card";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
+import { PasswordInput } from "../ui/password-input";
 import { getSafeReturnTo } from "@/lib/auth/get-safe-return-to";
 
 type LoginFormProps = {
@@ -92,35 +94,45 @@ export function LoginForm({ registrationCompleted }: LoginFormProps) {
   return (
     <AuthCard
       title="Welcome back"
-      description="Log in to continue with Your Shadow."
+      description="Log in to pick up from your next useful step."
       footer={
         <>
           Do not have an account?{" "}
           <Link
             href="/register"
-            className="font-semibold text-primary hover:underline"
+            className="inline-flex min-h-11 items-center rounded-compact font-semibold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             Create one
           </Link>
         </>
       }
     >
-      <form className="space-y-5" onSubmit={handleSubmit} noValidate>
+      <form className="space-y-6" onSubmit={handleSubmit} noValidate>
         {registrationCompleted ? (
           <div
-            className="rounded-md border border-primary bg-primary/10 px-4 py-3 text-sm text-foreground"
+            className="flex items-start gap-3 rounded-control border border-success/40 bg-success/10 p-4 text-sm leading-6 text-foreground"
             role="status"
           >
-            Your account was created successfully. You can now log in.
+            <CircleCheck
+              aria-hidden="true"
+              className="mt-0.5 size-5 shrink-0 text-success"
+              strokeWidth={2}
+            />
+            <p>Your account was created successfully. You can now log in.</p>
           </div>
         ) : null}
 
         {formError ? (
           <div
-            className="rounded-md border border-error bg-error/10 px-4 py-3 text-sm text-error"
+            className="flex items-start gap-3 rounded-control border border-error/40 bg-error/10 p-4 text-sm leading-6 text-foreground"
             role="alert"
           >
-            {formError}
+            <CircleAlert
+              aria-hidden="true"
+              className="mt-0.5 size-5 shrink-0 text-error"
+              strokeWidth={2}
+            />
+            <p>{formError}</p>
           </div>
         ) : null}
 
@@ -139,10 +151,9 @@ export function LoginForm({ registrationCompleted }: LoginFormProps) {
           }}
         />
 
-        <Input
+        <PasswordInput
           id="login-password"
           name="password"
-          type="password"
           label="Password"
           autoComplete="current-password"
           value={password}
@@ -154,7 +165,12 @@ export function LoginForm({ registrationCompleted }: LoginFormProps) {
           }}
         />
 
-        <Button type="submit" className="w-full" loading={isSubmitting}>
+        <Button
+          type="submit"
+          className="min-h-12 w-full"
+          loading={isSubmitting}
+          loadingLabel="Logging in..."
+        >
           Log in
         </Button>
       </form>
