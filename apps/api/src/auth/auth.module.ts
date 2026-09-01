@@ -8,6 +8,7 @@ import { AuthService } from './auth.service';
 import { CurrentUserController } from './current-user.controller';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { AccountDeletionService } from './services/account-deletion.service';
 import { AuthCookieService } from './services/auth-cookie.service';
 import { AuthSessionService } from './services/auth-session.service';
 import { AuthTokenService } from './services/auth-token.service';
@@ -30,6 +31,7 @@ import { PasswordService } from './services/password.service';
   ],
   controllers: [AuthController, CurrentUserController],
   providers: [
+    AccountDeletionService,
     AuthService,
     AuthCookieService,
     AuthSessionService,

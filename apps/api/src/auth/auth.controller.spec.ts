@@ -8,6 +8,8 @@ import request from 'supertest';
 import { UserStatus } from '../users/enums/user-status.enum';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { AccountDeletionService } from './services/account-deletion.service';
 import { AuthCookieService } from './services/auth-cookie.service';
 import { AuthSessionService } from './services/auth-session.service';
 
@@ -27,6 +29,10 @@ describe('AuthController', () => {
     logout: jest.fn(),
   };
 
+  const accountDeletionService = {
+    deleteAccount: jest.fn(),
+  };
+
   beforeAll(async () => {
     const moduleRef = await Test.createTestingModule({
       controllers: [AuthController],
@@ -43,8 +49,17 @@ describe('AuthController', () => {
           provide: AuthSessionService,
           useValue: authSessionService,
         },
+        {
+          provide: AccountDeletionService,
+          useValue: accountDeletionService,
+        },
       ],
-    }).compile();
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue({
+        canActivate: () => true,
+      })
+      .compile();
 
     app = moduleRef.createNestApplication();
 

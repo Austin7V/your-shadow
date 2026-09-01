@@ -1,20 +1,26 @@
 import {
   Body,
   Controller,
+  Delete,
   HttpCode,
   HttpStatus,
   Post,
   Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
+import { DeleteAccountDto } from './dto/delete-account.dto';
 import { LoginDto } from './dto/login.dto';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { RegisterDto } from './dto/register.dto';
 import { RegisterResponseDto } from './dto/register-response.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { AccountDeletionService } from './services/account-deletion.service';
 import { AuthCookieService } from './services/auth-cookie.service';
 import { AuthSessionService } from './services/auth-session.service';
+import type { AuthenticatedRequest } from './types/authenticated-request.type';
 import { getRefreshTokenCookie } from './utils/refresh-token-cookie.util';
 
 @Controller('auth')
@@ -23,6 +29,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly authSessionService: AuthSessionService,
     private readonly authCookieService: AuthCookieService,
+    private readonly accountDeletionService: AccountDeletionService,
   ) {}
 
   @Post('register')
@@ -84,5 +91,21 @@ export class AuthController {
     } finally {
       this.authCookieService.clearAuthenticationCookies(response);
     }
+  }
+
+  @Delete('account')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @UseGuards(JwtAuthGuard)
+  async deleteAccount(
+    @Req() request: AuthenticatedRequest,
+    @Body() deleteAccountDto: DeleteAccountDto,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<void> {
+    await this.accountDeletionService.deleteAccount(
+      request.auth.userId,
+      deleteAccountDto.password,
+    );
+
+    this.authCookieService.clearAuthenticationCookies(response);
   }
 }
