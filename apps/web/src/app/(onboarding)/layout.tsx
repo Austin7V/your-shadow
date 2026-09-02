@@ -7,13 +7,11 @@ type OnboardingLayoutProps = {
 };
 
 export default function OnboardingLayout({
-                                           children,
-                                         }: OnboardingLayoutProps) {
+  children,
+}: OnboardingLayoutProps) {
   return (
-      <ProtectedRoute>
-        <OnboardingRequired>
-          {children}
-        </OnboardingRequired>
-      </ProtectedRoute>
+    <ProtectedRoute>
+      <OnboardingRequired>{children}</OnboardingRequired>
+    </ProtectedRoute>
   );
 }

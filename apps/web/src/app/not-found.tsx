@@ -8,14 +8,14 @@ export const metadata: Metadata = {
 
 export default function NotFoundPage() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-background px-6 py-16 text-foreground">
-      <section className="w-full max-w-lg rounded-xl border border-border bg-surface p-8 text-center shadow-md sm:p-10">
+    <main className="flex min-h-screen items-center justify-center bg-background px-5 py-16 text-foreground sm:px-6">
+      <section className="motion-enter w-full max-w-lg rounded-card border border-border bg-surface p-6 text-center shadow-md sm:p-10">
         <CircleHelp
           aria-hidden="true"
-          className="mx-auto size-10 text-primary"
+          className="mx-auto size-10 text-primary-content"
         />
 
-        <p className="mt-5 text-sm font-semibold tracking-[0.2em] text-primary uppercase">
+        <p className="mt-5 text-sm font-semibold tracking-[0.2em] text-primary-content uppercase">
           Error 404
         </p>
 
@@ -29,7 +29,7 @@ export default function NotFoundPage() {
 
         <Link
           href="/"
-          className="mt-7 inline-flex min-h-11 items-center justify-center rounded-md bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+          className="motion-press mt-7 inline-flex min-h-11 items-center justify-center rounded-control border border-primary-action bg-primary-action px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:border-primary-action-hover hover:bg-primary-action-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
         >
           Return home
         </Link>

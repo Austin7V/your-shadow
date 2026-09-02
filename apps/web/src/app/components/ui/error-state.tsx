@@ -2,6 +2,7 @@
 
 import { CircleAlert } from "lucide-react";
 import { Button } from "./button";
+import { FeedbackState } from "./feedback-state";
 
 type ErrorStateProps = {
   title?: string;
@@ -17,23 +18,19 @@ export function ErrorState({
   retryLabel = "Try again",
 }: ErrorStateProps) {
   return (
-    <div
+    <FeedbackState
+      tone="error"
       role="alert"
-      className="rounded-lg border border-error bg-surface p-6 text-center"
-    >
-      <CircleAlert aria-hidden="true" className="mx-auto size-8 text-error" />
-
-      <h2 className="mt-4 text-lg font-semibold">{title}</h2>
-
-      <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted-foreground">
-        {description}
-      </p>
-
-      {onRetry ? (
-        <Button className="mt-5" variant="secondary" onClick={onRetry}>
-          {retryLabel}
-        </Button>
-      ) : null}
-    </div>
+      icon={CircleAlert}
+      title={title}
+      description={description}
+      action={
+        onRetry ? (
+          <Button variant="secondary" onClick={onRetry}>
+            {retryLabel}
+          </Button>
+        ) : undefined
+      }
+    />
   );
 }

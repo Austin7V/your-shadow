@@ -1,60 +1,132 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8fafc;
+  color-scheme: light;
+
+  --background: #f7faf8;
   --surface: #ffffff;
-  --surface-muted: #f1f5f9;
+  --surface-muted: #eef7f3;
+  --surface-raised: #ffffff;
 
-  --foreground: #1f2937;
-  --muted-foreground: #6b7280;
+  --foreground: #14201f;
+  --muted-foreground: #667673;
 
-  --primary: #14b8a6;
-  --primary-hover: #0f9488;
+  --primary: #0f9f91;
+  --primary-hover: #0b8378;
   --primary-foreground: #ffffff;
 
-  --success: #22c55e;
-  --warning: #f59e0b;
-  --error: #ef4444;
-  --safety: #3b82f6;
+  --progress: #63b94e;
+  --analytics: #7668d8;
+  --accent-warm: #f28a72;
+  --success: #278a5b;
+  --warning: #b76a16;
+  --error: #c84e55;
+  --safety: #3978b8;
 
-  --border: #e2e8f0;
-  --ring: #14b8a6;
+  --border: #dde8e3;
+  --ring: #087f74;
 
-  --radius-sm: 0.375rem;
-  --radius-md: 0.625rem;
-  --radius-lg: 1rem;
-  --radius-xl: 1.5rem;
+  --primary-content: color-mix(
+    in srgb,
+    var(--primary) 72%,
+    var(--foreground)
+  );
+  --primary-action: var(--primary-content);
+  --primary-action-hover: var(--primary-hover);
+  --success-content: color-mix(
+    in srgb,
+    var(--success) 87%,
+    var(--foreground)
+  );
+  --warning-content: color-mix(
+    in srgb,
+    var(--warning) 85%,
+    var(--foreground)
+  );
+  --error-content: color-mix(
+    in srgb,
+    var(--error) 90%,
+    var(--foreground)
+  );
+  --safety-content: color-mix(
+    in srgb,
+    var(--safety) 92%,
+    var(--foreground)
+  );
 
-  --shadow-sm: 0 1px 2px rgb(15 23 42 / 0.05);
-  --shadow-md: 0 4px 12px rgb(15 23 42 / 0.08);
-  --shadow-lg: 0 16px 32px rgb(15 23 42 / 0.12);
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  --shape-radius-compact: 0.75rem;
+  --shape-radius-control: 0.875rem;
+  --shape-radius-card: 1.25rem;
+  --shape-radius-panel: 1.75rem;
+
+  --elevation-sm: 0 1px 3px rgb(20 32 31 / 0.06);
+  --elevation-md: 0 8px 24px rgb(20 32 31 / 0.08);
+  --elevation-lg: 0 18px 48px rgb(20 32 31 / 0.12);
+
+  --motion-duration-instant: 80ms;
+  --motion-duration-control: 180ms;
+  --motion-duration-enter: 240ms;
+  --motion-duration-data: 600ms;
+  --motion-duration-companion: 3200ms;
 }
 
-.dark {
-  --background: #0f1117;
-  --surface: #171b22;
-  --surface-muted: #222833;
+:root[data-theme="dark"] {
+  color-scheme: dark;
 
-  --foreground: #f5f7fa;
-  --muted-foreground: #b5bcc8;
+  --background: #08131b;
+  --surface: #0f2028;
+  --surface-muted: #172b34;
+  --surface-raised: #1b3039;
 
-  --primary: #2dd4bf;
-  --primary-hover: #5eead4;
-  --primary-foreground: #0f1117;
+  --foreground: #f3faf8;
+  --muted-foreground: #9baeac;
 
-  --success: #4ade80;
-  --warning: #fbbf24;
-  --error: #f87171;
-  --safety: #60a5fa;
+  --primary: #37d6c4;
+  --primary-hover: #68e6d8;
+  --primary-foreground: #071412;
 
-  --border: #303846;
-  --ring: #5eead4;
+  --progress: #b7ed61;
+  --analytics: #a78bfa;
+  --accent-warm: #ff9a7f;
+  --success: #58d68d;
+  --warning: #f3b85b;
+  --error: #ff7a83;
+  --safety: #6db7ff;
+
+  --border: #29404a;
+  --ring: #7cebdd;
+
+  --primary-content: var(--primary);
+  --primary-action: var(--primary);
+  --primary-action-hover: var(--primary-hover);
+  --success-content: var(--success);
+  --warning-content: var(--warning);
+  --error-content: var(--error);
+  --safety-content: var(--safety);
+
+  --elevation-sm: 0 1px 2px rgb(0 0 0 / 0.16);
+  --elevation-md: 0 8px 24px rgb(0 0 0 / 0.18);
+  --elevation-lg: 0 18px 48px rgb(0 0 0 / 0.22);
 }
 
 @theme inline {
+  --spacing: 0.25rem;
+  --breakpoint-xl: 75rem;
+
   --color-background: var(--background);
   --color-surface: var(--surface);
   --color-surface-muted: var(--surface-muted);
+  --color-surface-raised: var(--surface-raised);
 
   --color-foreground: var(--foreground);
   --color-muted-foreground: var(--muted-foreground);
@@ -62,32 +134,554 @@
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-content: var(--primary-content);
+  --color-primary-action: var(--primary-action);
+  --color-primary-action-hover: var(--primary-action-hover);
 
+  --color-progress: var(--progress);
+  --color-analytics: var(--analytics);
+  --color-accent-warm: var(--accent-warm);
   --color-success: var(--success);
+  --color-success-content: var(--success-content);
   --color-warning: var(--warning);
+  --color-warning-content: var(--warning-content);
   --color-error: var(--error);
+  --color-error-content: var(--error-content);
   --color-safety: var(--safety);
+  --color-safety-content: var(--safety-content);
 
   --color-border: var(--border);
   --color-ring: var(--ring);
 
-  --font-sans: var(--font-inter);
+  --font-sans: var(--font-manrope, ui-sans-serif), system-ui, sans-serif;
 
-  --radius-sm: var(--radius-sm);
-  --radius-md: var(--radius-md);
-  --radius-lg: var(--radius-lg);
-  --radius-xl: var(--radius-xl);
+  --radius-sm: var(--shape-radius-compact);
+  --radius-md: var(--shape-radius-control);
+  --radius-lg: var(--shape-radius-card);
+  --radius-xl: var(--shape-radius-panel);
+  --radius-compact: var(--shape-radius-compact);
+  --radius-control: var(--shape-radius-control);
+  --radius-card: var(--shape-radius-card);
+  --radius-panel: var(--shape-radius-panel);
 
-  --shadow-sm: var(--shadow-sm);
-  --shadow-md: var(--shadow-md);
-  --shadow-lg: var(--shadow-lg);
+  --shadow-sm: var(--elevation-sm);
+  --shadow-md: var(--elevation-md);
+  --shadow-lg: var(--elevation-lg);
+
+  --duration-instant: var(--motion-duration-instant);
+  --duration-control: var(--motion-duration-control);
+  --duration-enter: var(--motion-duration-enter);
+  --duration-data: var(--motion-duration-data);
+  --duration-companion: var(--motion-duration-companion);
 }
 
-* {
+*,
+*::before,
+*::after {
   border-color: var(--border);
+}
+
+html {
+  background: var(--background);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  font-size: 1rem;
+  line-height: 1.5;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--primary) 24%, transparent);
+  color: var(--foreground);
+}
+
+:root[data-theme-transition="true"],
+:root[data-theme-transition="true"] *,
+:root[data-theme-transition="true"] *::before,
+:root[data-theme-transition="true"] *::after {
+  transition-duration: var(--duration-control) !important;
+  transition-property: background-color, border-color, box-shadow, color, fill,
+    stroke !important;
+  transition-timing-function: ease-out !important;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.motion-enter {
+  animation: shadow-enter var(--duration-enter) ease-out both;
+}
+
+.motion-delay-1 {
+  animation-delay: var(--duration-instant);
+}
+
+.motion-press {
+  transition-duration: var(--duration-control);
+  transition-property: background-color, border-color, color, transform;
+  transition-timing-function: ease-out;
+}
+
+.motion-press:active:not(:disabled, [aria-disabled="true"]) {
+  transition-duration: var(--duration-instant);
+  transform: scale(0.98);
+}
+
+.motion-complete {
+  animation: shadow-complete var(--duration-enter) ease-out both;
+}
+
+.motion-progress-draw {
+  stroke-dasharray: var(--motion-path-length);
+  stroke-dashoffset: var(--motion-path-offset);
+  animation: shadow-progress-draw var(--duration-data) ease-out both;
+}
+
+.motion-chart-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: shadow-chart-draw var(--duration-data) ease-out both;
+}
+
+@keyframes shadow-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.375rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shadow-complete {
+  0% {
+    opacity: 0.72;
+    transform: scale(0.98);
+  }
+
+  60% {
+    opacity: 1;
+    transform: scale(1.015);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shadow-progress-draw {
+  from {
+    stroke-dashoffset: var(--motion-path-length);
+  }
+
+  to {
+    stroke-dashoffset: var(--motion-path-offset);
+  }
+}
+
+@keyframes shadow-chart-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.shadow-orb {
+  --shadow-orb-state: var(--primary);
+  --shadow-orb-secondary: var(--analytics);
+  --shadow-orb-size: clamp(10rem, 28vw, 14rem);
+
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.shadow-orb[data-shadow-size="compact"] {
+  --shadow-orb-size: 2.5rem;
+}
+
+.shadow-orb__visual {
+  position: relative;
+  display: inline-grid;
+  width: var(--shadow-orb-size);
+  aspect-ratio: 1;
+  flex: none;
+  place-items: center;
+  isolation: isolate;
+}
+
+.shadow-orb__aura,
+.shadow-orb__wave,
+.shadow-orb__shell,
+.shadow-orb__ring,
+.shadow-orb__signal,
+.shadow-orb__core {
+  position: absolute;
+  border-radius: 9999px;
+  pointer-events: none;
+}
+
+.shadow-orb__aura {
+  inset: -9%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--shadow-orb-state) 24%, transparent),
+    transparent 68%
+  );
+  opacity: 0.72;
+}
+
+.shadow-orb__wave {
+  inset: -3%;
+  border: 2px solid
+    color-mix(in srgb, var(--shadow-orb-state) 44%, transparent);
+  opacity: 0;
+}
+
+.shadow-orb__shell {
+  inset: 4%;
+  border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+  background:
+    radial-gradient(
+      circle at 32% 24%,
+      color-mix(in srgb, var(--surface-raised) 92%, transparent) 0 5%,
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 68% 72%,
+      color-mix(in srgb, var(--shadow-orb-secondary) 74%, transparent),
+      transparent 56%
+    ),
+    linear-gradient(
+      145deg,
+      var(--shadow-orb-state),
+      color-mix(
+        in srgb,
+        var(--shadow-orb-state) 54%,
+        var(--shadow-orb-secondary)
+      )
+    );
+  box-shadow:
+    inset 0 0 1.5rem color-mix(in srgb, var(--surface-raised) 22%, transparent),
+    0 0 1.5rem color-mix(in srgb, var(--shadow-orb-state) 18%, transparent);
+}
+
+.shadow-orb__ring {
+  inset: 9%;
+  border: 2px solid
+    color-mix(in srgb, var(--surface-raised) 58%, transparent);
+}
+
+.shadow-orb__signal {
+  inset: 0;
+  border: 2px solid transparent;
+  border-top-color: var(--shadow-orb-state);
+  opacity: 0;
+}
+
+.shadow-orb__signal::after {
+  position: absolute;
+  top: 4%;
+  left: 50%;
+  width: 0.5rem;
+  max-width: 8%;
+  aspect-ratio: 1;
+  border-radius: 9999px;
+  background: var(--shadow-orb-state);
+  content: "";
+  transform: translateX(-50%);
+}
+
+.shadow-orb__core {
+  inset: 28%;
+  background: color-mix(
+    in srgb,
+    var(--surface-raised) 48%,
+    var(--shadow-orb-state)
+  );
+  box-shadow: 0 0 1rem
+    color-mix(in srgb, var(--surface-raised) 52%, transparent);
+}
+
+.shadow-orb__glyph {
+  position: relative;
+  z-index: 2;
+  box-sizing: content-box;
+  width: clamp(1.75rem, 14%, 2.25rem);
+  height: clamp(1.75rem, 14%, 2.25rem);
+  padding: clamp(0.375rem, 4%, 0.625rem);
+  border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--surface-raised) 84%, transparent);
+  color: var(--foreground);
+}
+
+.shadow-orb[data-shadow-size="compact"] .shadow-orb__glyph {
+  width: 1rem;
+  height: 1rem;
+  padding: 0.25rem;
+}
+
+.shadow-orb[data-shadow-state="listening"] {
+  --shadow-orb-state: var(--safety);
+  --shadow-orb-secondary: var(--primary);
+}
+
+.shadow-orb[data-shadow-state="listening"] .shadow-orb__ring {
+  inset: 5%;
+  border-width: 0.25rem;
+  border-style: double;
+  border-color: color-mix(
+    in srgb,
+    var(--shadow-orb-state) 78%,
+    transparent
+  );
+}
+
+.shadow-orb[data-shadow-state="thinking"] {
+  --shadow-orb-state: var(--analytics);
+  --shadow-orb-secondary: var(--primary);
+}
+
+.shadow-orb[data-shadow-state="thinking"] .shadow-orb__ring {
+  border-style: dashed;
+  border-color: color-mix(
+    in srgb,
+    var(--shadow-orb-state) 76%,
+    transparent
+  );
+}
+
+.shadow-orb[data-shadow-state="thinking"] .shadow-orb__signal {
+  opacity: 1;
+}
+
+.shadow-orb[data-shadow-state="responding"] {
+  --shadow-orb-state: var(--accent-warm);
+  --shadow-orb-secondary: var(--primary);
+}
+
+.shadow-orb[data-shadow-state="responding"] .shadow-orb__wave {
+  opacity: 0.46;
+}
+
+.shadow-orb[data-shadow-state="success"] {
+  --shadow-orb-state: var(--success);
+  --shadow-orb-secondary: var(--progress);
+}
+
+.shadow-orb[data-shadow-state="success"] .shadow-orb__ring {
+  border-width: 0.25rem;
+  border-color: color-mix(
+    in srgb,
+    var(--success) 82%,
+    var(--surface-raised)
+  );
+}
+
+.shadow-orb[data-shadow-state="attention"] {
+  --shadow-orb-state: var(--warning);
+  --shadow-orb-secondary: var(--accent-warm);
+}
+
+.shadow-orb[data-shadow-state="attention"] .shadow-orb__ring {
+  inset: 6%;
+  border-width: 0.25rem;
+  border-style: dashed;
+  border-color: color-mix(
+    in srgb,
+    var(--warning) 86%,
+    var(--surface-raised)
+  );
+}
+
+.shadow-orb[data-shadow-state="offline"] {
+  --shadow-orb-state: var(--muted-foreground);
+  --shadow-orb-secondary: var(--border);
+}
+
+.shadow-orb[data-shadow-state="offline"] .shadow-orb__aura,
+.shadow-orb[data-shadow-state="offline"] .shadow-orb__wave {
+  opacity: 0;
+}
+
+.shadow-orb[data-shadow-state="offline"] .shadow-orb__shell {
+  filter: saturate(0.18);
+  box-shadow: none;
+}
+
+.shadow-orb[data-shadow-state="offline"] .shadow-orb__ring {
+  border-style: dashed;
+  border-color: var(--border);
+}
+
+.shadow-orb[data-shadow-state="idle"] .shadow-orb__visual {
+  animation: shadow-orb-breathe var(--duration-companion) ease-in-out infinite;
+}
+
+.shadow-orb[data-shadow-state="listening"] .shadow-orb__aura {
+  animation: shadow-orb-listen var(--duration-companion) ease-in-out infinite;
+}
+
+.shadow-orb[data-shadow-state="thinking"] .shadow-orb__signal {
+  animation: shadow-orb-think var(--duration-companion) linear infinite;
+}
+
+.shadow-orb[data-shadow-state="responding"] .shadow-orb__wave {
+  animation: shadow-orb-respond var(--duration-companion) ease-out infinite;
+}
+
+.shadow-orb[data-shadow-state="success"] .shadow-orb__visual {
+  animation: shadow-orb-success var(--duration-data) ease-out both;
+}
+
+.shadow-orb[data-shadow-state="attention"] .shadow-orb__ring {
+  animation: shadow-orb-attention var(--duration-data) ease-out both;
+}
+
+@keyframes shadow-orb-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.035);
+  }
+}
+
+@keyframes shadow-orb-listen {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(0.96);
+  }
+
+  50% {
+    opacity: 0.82;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes shadow-orb-think {
+  from {
+    transform: rotate(0);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shadow-orb-respond {
+  0% {
+    opacity: 0.56;
+    transform: scale(0.82);
+  }
+
+  72%,
+  100% {
+    opacity: 0;
+    transform: scale(1.16);
+  }
+}
+
+@keyframes shadow-orb-success {
+  0% {
+    transform: scale(0.94);
+  }
+
+  58% {
+    transform: scale(1.045);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes shadow-orb-attention {
+  0% {
+    opacity: 0.62;
+    transform: scale(0.94);
+  }
+
+  56% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+
+  100% {
+    opacity: 0.92;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  :root[data-theme-transition="true"],
+  :root[data-theme-transition="true"] *,
+  :root[data-theme-transition="true"] *::before,
+  :root[data-theme-transition="true"] *::after {
+    transition-duration: 0.01ms !important;
+  }
+
+  .motion-enter,
+  .motion-complete {
+    animation: none !important;
+    opacity: 1;
+    transform: none;
+  }
+
+  .motion-progress-draw {
+    animation: none !important;
+    stroke-dashoffset: var(--motion-path-offset);
+  }
+
+  .motion-chart-draw {
+    animation: none !important;
+    stroke-dashoffset: 0;
+  }
+
+  .shadow-orb__visual,
+  .shadow-orb__aura,
+  .shadow-orb__wave,
+  .shadow-orb__ring,
+  .shadow-orb__signal {
+    animation: none !important;
+  }
 }

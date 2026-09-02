@@ -1,255 +1,271 @@
 "use client";
 
-import {
-    useState,
-    type FormEvent,
-} from "react";
+import { CalendarDays, Plus, Scale } from "lucide-react";
+import { useState, type FormEvent } from "react";
 import { Button } from "@/app/components/ui/button";
+import { EmptyState } from "@/app/components/ui/empty-state";
+import { ErrorState } from "@/app/components/ui/error-state";
 import { Input } from "@/app/components/ui/input";
+import { Skeleton } from "@/app/components/ui/skeleton";
+import { SuccessState } from "@/app/components/ui/success-state";
 import { useWeightEntries } from "@/hooks/use-weight-entries";
 import { getAuthErrorMessage } from "@/lib/api/auth-api";
-import {
-    createWeightEntry,
-} from "@/lib/api/profile-api";
+import { createWeightEntry } from "@/lib/api/profile-api";
 
-const formatMeasurementDate = (
-    value: string,
-): string => {
-    const date = new Date(value);
+const formatMeasurementDate = (value: string): string => {
+  const date = new Date(value);
 
-    if (Number.isNaN(date.getTime())) {
-        return value;
-    }
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
 
-    return `${new Intl.DateTimeFormat("en", {
-        dateStyle: "medium",
-        timeStyle: "short",
-        timeZone: "UTC",
-    }).format(date)} UTC`;
+  return `${new Intl.DateTimeFormat("en", {
+    dateStyle: "medium",
+    timeStyle: "short",
+    timeZone: "UTC",
+  }).format(date)} UTC`;
 };
 
-const validateWeight = (
-    value: string,
-): string | null => {
-    const pattern = /^\d+(?:\.\d{1,2})?$/;
-    const weightKg = Number(value);
+const validateWeight = (value: string): string | null => {
+  const pattern = /^\d+(?:\.\d{1,2})?$/;
+  const weightKg = Number(value);
 
-    if (
-        !pattern.test(value) ||
-        weightKg < 30 ||
-        weightKg > 500
-    ) {
-        return "Weight must be between 30 and 500 kg.";
-    }
+  if (!pattern.test(value) || weightKg < 30 || weightKg > 500) {
+    return "Weight must be between 30 and 500 kg.";
+  }
 
-    return null;
+  return null;
 };
 
 export function WeightHistory() {
-    const {
-        weightEntries,
-        error,
-        isLoading,
-        refreshWeightEntries,
-    } = useWeightEntries();
+  const { weightEntries, error, isLoading, refreshWeightEntries } =
+    useWeightEntries();
 
-    const [weightKg, setWeightKg] = useState("");
-    const [weightError, setWeightError] = useState<
-        string | null
-    >(null);
-    const [submitError, setSubmitError] = useState<
-        string | null
-    >(null);
-    const [isSubmitting, setIsSubmitting] =
-        useState(false);
+  const [weightKg, setWeightKg] = useState("");
+  const [weightError, setWeightError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSavedState, setShowSavedState] = useState(false);
 
-    const handleSubmit = async (
-        event: FormEvent<HTMLFormElement>,
-    ): Promise<void> => {
-        event.preventDefault();
-        setSubmitError(null);
+  const handleSubmit = async (
+    event: FormEvent<HTMLFormElement>,
+  ): Promise<void> => {
+    event.preventDefault();
+    setSubmitError(null);
+    setShowSavedState(false);
 
-        const validationError = validateWeight(weightKg);
+    const validationError = validateWeight(weightKg);
 
-        if (validationError !== null) {
-            setWeightError(validationError);
-            return;
-        }
-
-        setIsSubmitting(true);
-
-        try {
-            await createWeightEntry({
-                weightKg: Number(weightKg),
-            });
-
-            await refreshWeightEntries();
-            setWeightKg("");
-            setWeightError(null);
-        } catch (requestError: unknown) {
-            setSubmitError(
-                getAuthErrorMessage(requestError),
-            );
-        } finally {
-            setIsSubmitting(false);
-        }
-    };
-
-    if (isLoading) {
-        return (
-            <section className="rounded-lg border border-border bg-surface p-6 shadow-sm">
-                <p className="text-sm text-muted-foreground">
-                    Loading weight history...
-                </p>
-            </section>
-        );
+    if (validationError !== null) {
+      setWeightError(validationError);
+      return;
     }
 
-    if (error !== null) {
-        return (
-            <section className="rounded-lg border border-error bg-surface p-6 shadow-sm">
-                <p className="text-error">{error.message}</p>
+    setIsSubmitting(true);
 
-                <Button
-                    type="button"
-                    className="mt-4"
-                    onClick={() => void refreshWeightEntries()}
-                >
-                    Try again
-                </Button>
-            </section>
-        );
+    try {
+      await createWeightEntry({
+        weightKg: Number(weightKg),
+      });
+
+      await refreshWeightEntries();
+      setWeightKg("");
+      setWeightError(null);
+      setShowSavedState(true);
+    } catch (requestError: unknown) {
+      setSubmitError(getAuthErrorMessage(requestError));
+    } finally {
+      setIsSubmitting(false);
     }
+  };
 
-    const latestEntry = weightEntries[0];
+  if (isLoading) {
+    return <Skeleton label="Loading weight history" lines={5} />;
+  }
 
+  if (error !== null) {
     return (
-        <section className="rounded-lg border border-border bg-surface p-6 shadow-sm">
-            <div className="border-b border-border pb-5">
-                <h2 className="text-xl font-semibold">
-                    Weight history
-                </h2>
+      <ErrorState
+        title="Unable to load weight history"
+        description={error.message}
+        onRetry={() => void refreshWeightEntries()}
+      />
+    );
+  }
 
-                <p className="mt-1 text-sm text-muted-foreground">
-                    Every measurement is stored separately and does
-                    not replace previous entries.
-                </p>
-            </div>
+  const latestEntry = weightEntries[0];
 
-            <div className="grid gap-6 pt-6 lg:grid-cols-[minmax(0,1fr)_minmax(18rem,0.7fr)]">
+  return (
+    <div className="space-y-4">
+      {showSavedState ? (
+        <SuccessState
+          title="Measurement saved"
+          description="Your new weight entry has been added to the history."
+        />
+      ) : null}
+
+      <section className="rounded-card border border-border bg-surface p-5 shadow-sm sm:p-6">
+        <div className="border-b border-border pb-5">
+          <p className="text-sm font-semibold tracking-[0.16em] text-primary-content uppercase">
+            Progress context
+          </p>
+          <h2 className="mt-2 text-2xl font-bold tracking-tight">
+            Weight history
+          </h2>
+          <p className="mt-2 max-w-2xl text-base leading-7 text-muted-foreground">
+            Every measurement is stored as a separate entry, so previous
+            values remain available for your review.
+          </p>
+        </div>
+
+        <div className="grid gap-6 pt-6 lg:grid-cols-[minmax(0,1fr)_minmax(19rem,0.72fr)]">
+          <div className="min-w-0">
+            {latestEntry ? (
+              <div className="mb-5 flex flex-col gap-4 rounded-card border border-progress/40 bg-progress/10 p-5 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    {latestEntry ? (
-                        <div className="mb-6 rounded-lg border border-primary/30 bg-primary/5 p-5">
-                            <p className="text-sm font-medium text-muted-foreground">
-                                Latest weight
-                            </p>
-
-                            <p className="mt-2 text-3xl font-bold">
-                                {latestEntry.weightKg} kg
-                            </p>
-
-                            <p className="mt-1 text-sm text-muted-foreground">
-                                {formatMeasurementDate(
-                                    latestEntry.measuredAt,
-                                )}
-                            </p>
-                        </div>
-                    ) : null}
-
-                    {weightEntries.length === 0 ? (
-                        <p className="rounded-md border border-border bg-surface-muted p-4 text-sm text-muted-foreground">
-                            No weight measurements have been added yet.
-                        </p>
-                    ) : (
-                        <div className="overflow-hidden rounded-lg border border-border">
-                            <div className="max-h-80 overflow-y-auto">
-                                <table className="w-full text-left text-sm">
-                                    <thead className="sticky top-0 bg-surface-muted">
-                                    <tr>
-                                        <th className="px-4 py-3 font-semibold">
-                                            Date
-                                        </th>
-
-                                        <th className="px-4 py-3 text-right font-semibold">
-                                            Weight
-                                        </th>
-                                    </tr>
-                                    </thead>
-
-                                    <tbody className="divide-y divide-border">
-                                    {weightEntries.map((entry) => (
-                                        <tr key={entry.id}>
-                                            <td className="px-4 py-3 text-muted-foreground">
-                                                {formatMeasurementDate(
-                                                    entry.measuredAt,
-                                                )}
-                                            </td>
-
-                                            <td className="px-4 py-3 text-right font-semibold">
-                                                {entry.weightKg} kg
-                                            </td>
-                                        </tr>
-                                    ))}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    )}
+                  <p className="text-sm font-semibold text-muted-foreground">
+                    Latest measurement
+                  </p>
+                  <p className="mt-2 text-4xl font-bold tracking-tight tabular-nums">
+                    {latestEntry.weightKg}
+                    <span className="ml-2 text-lg font-semibold text-muted-foreground">
+                      kg
+                    </span>
+                  </p>
                 </div>
 
-                <form
-                    className="h-fit space-y-4 rounded-lg border border-border bg-surface-muted p-5"
-                    onSubmit={(event) => void handleSubmit(event)}
-                    noValidate
+                <p className="flex items-center gap-2 text-sm leading-6 text-muted-foreground">
+                  <CalendarDays
+                    aria-hidden="true"
+                    className="size-4 shrink-0 text-analytics"
+                    strokeWidth={2}
+                  />
+                  {formatMeasurementDate(latestEntry.measuredAt)}
+                </p>
+              </div>
+            ) : null}
+
+            {weightEntries.length === 0 ? (
+              <EmptyState
+                title="No measurements yet"
+                description="Add your first measurement when you are ready. An empty history is a neutral starting point."
+              />
+            ) : (
+              <>
+                <ol
+                  aria-label="Weight measurements"
+                  className="divide-y divide-border overflow-hidden rounded-card border border-border md:hidden"
                 >
-                    <div>
-                        <h3 className="font-semibold">
-                            Add new measurement
-                        </h3>
-
-                        <p className="mt-1 text-sm text-muted-foreground">
-                            The current date and time will be added
-                            automatically.
-                        </p>
-                    </div>
-
-                    <Input
-                        label="Weight"
-                        name="weightKg"
-                        type="number"
-                        inputMode="decimal"
-                        min={30}
-                        max={500}
-                        step={0.01}
-                        value={weightKg}
-                        error={weightError ?? undefined}
-                        hint="Weight in kilograms."
-                        disabled={isSubmitting}
-                        onChange={(event) => {
-                            setWeightKg(event.target.value);
-                            setWeightError(null);
-                            setSubmitError(null);
-                        }}
-                    />
-
-                    {submitError !== null ? (
-                        <p
-                            className="text-sm text-error"
-                            role="alert"
-                        >
-                            {submitError}
-                        </p>
-                    ) : null}
-
-                    <Button
-                        type="submit"
-                        loading={isSubmitting}
-                        className="w-full"
+                  {weightEntries.map((entry) => (
+                    <li
+                      key={entry.id}
+                      className="flex items-start justify-between gap-4 bg-surface px-4 py-4"
                     >
-                        Save measurement
-                    </Button>
-                </form>
+                      <span className="min-w-0 text-sm leading-6 text-muted-foreground">
+                        {formatMeasurementDate(entry.measuredAt)}
+                      </span>
+                      <span className="shrink-0 font-semibold tabular-nums">
+                        {entry.weightKg} kg
+                      </span>
+                    </li>
+                  ))}
+                </ol>
+
+                <div className="hidden max-h-80 overflow-y-auto rounded-card border border-border md:block">
+                  <table className="w-full text-left text-sm">
+                    <caption className="sr-only">
+                      Weight measurement history in UTC
+                    </caption>
+                    <thead className="sticky top-0 bg-surface-muted">
+                      <tr>
+                        <th scope="col" className="px-4 py-3 font-semibold">
+                          Date
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-4 py-3 text-right font-semibold"
+                        >
+                          Weight
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {weightEntries.map((entry) => (
+                        <tr key={entry.id}>
+                          <td className="px-4 py-3 text-muted-foreground">
+                            {formatMeasurementDate(entry.measuredAt)}
+                          </td>
+                          <td className="px-4 py-3 text-right font-semibold tabular-nums">
+                            {entry.weightKg} kg
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </>
+            )}
+          </div>
+
+          <form
+            className="h-fit space-y-5 rounded-card border border-border bg-surface-muted p-5"
+            onSubmit={(event) => void handleSubmit(event)}
+            noValidate
+          >
+            <div className="flex items-start gap-3">
+              <span
+                aria-hidden="true"
+                className="inline-flex size-10 shrink-0 items-center justify-center rounded-control bg-surface text-primary-content"
+              >
+                <Scale className="size-5" strokeWidth={2} />
+              </span>
+              <div>
+                <h3 className="text-lg font-semibold">Add measurement</h3>
+                <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                  The current date and time are added automatically.
+                </p>
+              </div>
             </div>
-        </section>
-    );
+
+            <Input
+              label="Weight"
+              name="weightKg"
+              type="number"
+              inputMode="decimal"
+              min={30}
+              max={500}
+              step={0.01}
+              value={weightKg}
+              error={weightError ?? undefined}
+              hint="Kilograms"
+              disabled={isSubmitting}
+              onChange={(event) => {
+                setWeightKg(event.target.value);
+                setWeightError(null);
+                setSubmitError(null);
+                setShowSavedState(false);
+              }}
+            />
+
+            {submitError !== null ? (
+              <ErrorState
+                title="Measurement was not saved"
+                description={submitError}
+              />
+            ) : null}
+
+            <Button
+              type="submit"
+              loading={isSubmitting}
+              loadingLabel="Saving measurement..."
+              className="min-h-12 w-full"
+            >
+              <Plus aria-hidden="true" className="size-4" strokeWidth={2} />
+              Save measurement
+            </Button>
+          </form>
+        </div>
+      </section>
+    </div>
+  );
 }

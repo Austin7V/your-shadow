@@ -133,6 +133,10 @@ export const refreshSession = (): Promise<void> => {
   return postWithoutResponse("/auth/refresh");
 };
 
+export const logoutUser = (): Promise<void> => {
+  return postWithoutResponse("/auth/logout");
+};
+
 export const deleteCurrentAccount = (
     request: DeleteAccountRequest,
 ): Promise<void> => {

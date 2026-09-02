@@ -1,13 +1,15 @@
 "use client";
 
 import Link from "next/link";
+import { CircleAlert, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { useState, type FormEvent } from "react";
 import { registerUser, getAuthErrorMessage } from "@/lib/api/auth-api";
 import { AuthCard } from "./auth-card";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { Input } from "../ui/input";
+import { PasswordInput } from "../ui/password-input";
 
 type RegisterField =
   | "email"
@@ -100,26 +102,31 @@ export function RegisterForm() {
   return (
     <AuthCard
       title="Create your account"
-      description="Start building healthier habits with your personal companion."
+      description="Begin with a private account, then shape Your Shadow around your goals."
       footer={
         <>
           Already have an account?{" "}
           <Link
             href="/login"
-            className="font-semibold text-primary hover:underline"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-compact px-1 font-semibold text-primary-content hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             Log in
           </Link>
         </>
       }
     >
-      <form className="space-y-5" onSubmit={handleSubmit} noValidate>
+      <form className="space-y-6" onSubmit={handleSubmit} noValidate>
         {formError ? (
           <div
-            className="rounded-md border border-error bg-error/10 px-4 py-3 text-sm text-error"
+            className="flex items-start gap-3 rounded-control border border-error/40 bg-error/10 p-4 text-sm leading-6 text-foreground"
             role="alert"
           >
-            {formError}
+            <CircleAlert
+              aria-hidden="true"
+              className="mt-0.5 size-5 shrink-0 text-error-content"
+              strokeWidth={2}
+            />
+            <p>{formError}</p>
           </div>
         ) : null}
 
@@ -138,10 +145,9 @@ export function RegisterForm() {
           }}
         />
 
-        <Input
+        <PasswordInput
           id="register-password"
           name="password"
-          type="password"
           label="Password"
           autoComplete="new-password"
           value={password}
@@ -154,10 +160,9 @@ export function RegisterForm() {
           }}
         />
 
-        <Input
+        <PasswordInput
           id="register-confirm-password"
           name="confirmPassword"
-          type="password"
           label="Confirm password"
           autoComplete="new-password"
           value={confirmPassword}
@@ -182,7 +187,24 @@ export function RegisterForm() {
           }}
         />
 
-        <Button type="submit" className="w-full" loading={isSubmitting}>
+        <div className="flex items-start gap-3 rounded-control bg-surface-muted p-4 text-sm leading-6 text-muted-foreground">
+          <ShieldCheck
+            aria-hidden="true"
+            className="mt-0.5 size-5 shrink-0 text-safety-content"
+            strokeWidth={2}
+          />
+          <p>
+            Health-data consent is handled separately during onboarding and is
+            never selected for you.
+          </p>
+        </div>
+
+        <Button
+          type="submit"
+          className="min-h-12 w-full"
+          loading={isSubmitting}
+          loadingLabel="Creating account..."
+        >
           Create account
         </Button>
       </form>

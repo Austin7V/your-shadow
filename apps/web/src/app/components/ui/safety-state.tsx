@@ -1,23 +1,26 @@
 import { ShieldAlert } from "lucide-react";
+import type { ReactNode } from "react";
+import { FeedbackState } from "./feedback-state";
 
 type SafetyStateProps = {
   title: string;
   description: string;
+  action?: ReactNode;
 };
 
-export function SafetyState({ title, description }: SafetyStateProps) {
+export function SafetyState({
+  title,
+  description,
+  action,
+}: SafetyStateProps) {
   return (
-    <aside className="rounded-lg border border-safety bg-surface p-6">
-      <div className="flex gap-3">
-        <ShieldAlert aria-hidden="true" className="mt-0.5 size-6 text-safety" />
-
-        <div>
-          <h2 className="font-semibold">{title}</h2>
-          <p className="mt-1 text-sm leading-6 text-muted-foreground">
-            {description}
-          </p>
-        </div>
-      </div>
-    </aside>
+    <FeedbackState
+      tone="safety"
+      role="note"
+      icon={ShieldAlert}
+      title={title}
+      description={description}
+      action={action}
+    />
   );
 }

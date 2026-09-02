@@ -1,4 +1,6 @@
-import type { TextareaHTMLAttributes } from "react";
+"use client";
+
+import { useId, type TextareaHTMLAttributes } from "react";
 import { FieldMessage } from "./field-message";
 
 type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
@@ -14,31 +16,40 @@ export function Textarea({
   hint,
   className,
   disabled,
+  readOnly,
   ...props
 }: TextareaProps) {
-  const fieldId = id ?? label.toLowerCase().replaceAll(" ", "-");
+  const generatedId = useId();
+  const fieldId = id ?? generatedId;
   const messageId = `${fieldId}-message`;
+  const hasMessage = Boolean(error || hint);
 
   return (
     <div className="w-full">
-      <label htmlFor={fieldId} className="mb-2 block text-sm font-semibold">
+      <label
+        htmlFor={fieldId}
+        className="mb-2 block text-sm font-semibold text-foreground"
+      >
         {label}
       </label>
 
       <textarea
         id={fieldId}
         disabled={disabled}
-        aria-invalid={Boolean(error)}
-        aria-describedby={error || hint ? messageId : undefined}
-        className={`min-h-28 w-full resize-y rounded-md border bg-surface px-3 py-2.5 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50 ${
+        readOnly={readOnly}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={hasMessage ? messageId : undefined}
+        className={`min-h-32 w-full resize-y rounded-control border bg-surface px-3.5 py-3 text-base text-foreground outline-none transition-[background-color,border-color,box-shadow] duration-control placeholder:text-muted-foreground focus:border-ring focus:ring-2 focus:ring-ring/25 read-only:bg-surface-muted read-only:text-muted-foreground disabled:cursor-not-allowed disabled:bg-surface-muted disabled:opacity-60 ${
           error ? "border-error" : "border-border"
         } ${className ?? ""}`}
         {...props}
       />
 
-      <div id={messageId}>
-        <FieldMessage error={error} hint={hint} />
-      </div>
+      <FieldMessage
+        id={hasMessage ? messageId : undefined}
+        error={error}
+        hint={hint}
+      />
     </div>
   );
 }

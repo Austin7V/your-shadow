@@ -10,13 +10,19 @@ export function LoadingState({
   return (
     <div
       role="status"
-      className="flex flex-col items-center justify-center gap-3 rounded-lg border border-border bg-surface p-8 text-center"
+      aria-live="polite"
+      className="motion-enter flex min-h-48 flex-col items-center justify-center gap-4 rounded-card border border-border bg-surface p-6 text-center shadow-sm sm:p-8"
     >
-      <LoaderCircle
-        aria-hidden="true"
-        className="size-7 animate-spin text-primary"
-      />
-      <p className="text-sm text-muted-foreground">{label}</p>
+      <span className="inline-flex size-11 items-center justify-center rounded-full bg-primary/10 text-primary-content">
+        <LoaderCircle
+          aria-hidden="true"
+          className="size-6 animate-spin"
+          strokeWidth={2}
+        />
+      </span>
+      <p className="max-w-md text-sm leading-6 text-muted-foreground">
+        {label}
+      </p>
     </div>
   );
 }

@@ -2,6 +2,8 @@
 
 import { useEffect, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import { ErrorState } from "@/app/components/ui/error-state";
+import { LoadingState } from "@/app/components/ui/loading-state";
 import { useProfileStatus } from "@/hooks/use-profile-status";
 
 type ProfileRequiredProps = {
@@ -22,7 +24,9 @@ export function ProfileRequired({ children }: ProfileRequiredProps) {
   if (isLoading || hasProfile === false) {
     return (
       <main className="flex min-h-screen items-center justify-center p-6">
-        <p className="text-sm text-muted-foreground">Loading your profile...</p>
+        <div className="w-full max-w-lg">
+          <LoadingState label="Loading your profile..." />
+        </div>
       </main>
     );
   }
@@ -30,16 +34,12 @@ export function ProfileRequired({ children }: ProfileRequiredProps) {
   if (error !== null) {
     return (
       <main className="flex min-h-screen items-center justify-center p-6">
-        <div className="text-center">
-          <p className="text-error">{error.message}</p>
-
-          <button
-            type="button"
-            onClick={() => void refreshProfileStatus()}
-            className="mt-4 rounded-md bg-primary px-4 py-2 font-semibold text-primary-foreground"
-          >
-            Try again
-          </button>
+        <div className="w-full max-w-lg">
+          <ErrorState
+            title="Unable to load your profile"
+            description={error.message}
+            onRetry={() => void refreshProfileStatus()}
+          />
         </div>
       </main>
     );

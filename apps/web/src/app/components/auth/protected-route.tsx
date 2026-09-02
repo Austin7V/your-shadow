@@ -2,6 +2,8 @@
 
 import { useEffect, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import { ErrorState } from "@/app/components/ui/error-state";
+import { LoadingState } from "@/app/components/ui/loading-state";
 import { useCurrentUser } from "@/hooks/use-current-user";
 
 type ProtectedRouteProps = {
@@ -25,7 +27,9 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   if (status === "loading" || status === "unauthenticated") {
     return (
       <main className="flex min-h-screen items-center justify-center p-6">
-        <p className="text-sm text-muted-foreground">Loading your account...</p>
+        <div className="w-full max-w-lg">
+          <LoadingState label="Loading your account..." />
+        </div>
       </main>
     );
   }
@@ -33,18 +37,12 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   if (status === "error") {
     return (
       <main className="flex min-h-screen items-center justify-center p-6">
-        <div className="text-center">
-          <p className="text-error">
-            {error?.message ?? "Unable to load your account."}
-          </p>
-
-          <button
-            type="button"
-            onClick={() => void refreshCurrentUser()}
-            className="mt-4 rounded-md bg-primary px-4 py-2 font-semibold text-primary-foreground"
-          >
-            Try again
-          </button>
+        <div className="w-full max-w-lg">
+          <ErrorState
+            title="Unable to load your account"
+            description={error?.message ?? "Please try again."}
+            onRetry={() => void refreshCurrentUser()}
+          />
         </div>
       </main>
     );
