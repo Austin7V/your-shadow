@@ -26,14 +26,14 @@ export function DestructiveConfirmation({
         </span>
 
         <div className="min-w-0 flex-1">
-          <h2 className="text-lg font-semibold text-error">{title}</h2>
-          <p className="mt-1.5 text-sm leading-6 text-muted-foreground">
+          <h2 className="text-xl font-semibold text-error">{title}</h2>
+          <p className="mt-1.5 text-base leading-7 text-muted-foreground">
             {description}
           </p>
 
           {children ? <div className="mt-5">{children}</div> : null}
 
-          <div className="mt-5 flex flex-col-reverse gap-3 sm:flex-row sm:flex-wrap">
+          <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             {actions}
           </div>
         </div>
