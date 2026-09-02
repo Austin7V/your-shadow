@@ -16,7 +16,7 @@ export function AuthCard({
   return (
     <section className="rounded-panel border border-border bg-surface p-5 shadow-md sm:p-8 lg:p-10">
       <div>
-        <p className="text-sm font-semibold tracking-[0.18em] text-primary uppercase">
+        <p className="text-sm font-semibold tracking-[0.18em] text-primary-content uppercase">
           Your space
         </p>
         <h1 className="mt-3 text-[clamp(2rem,6vw,2.75rem)] leading-tight font-bold tracking-tight text-balance">

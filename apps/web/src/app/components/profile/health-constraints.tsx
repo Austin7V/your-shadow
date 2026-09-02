@@ -156,7 +156,7 @@ function ConstraintForm({
       noValidate
     >
       <div>
-        <p className="text-sm font-semibold tracking-[0.16em] text-primary uppercase">
+        <p className="text-sm font-semibold tracking-[0.16em] text-primary-content uppercase">
           {isNewConstraint ? "New health context" : "Edit health context"}
         </p>
         <h3 className="mt-2 text-xl font-semibold">
@@ -319,7 +319,7 @@ export function HealthConstraints() {
       <section className="rounded-card border border-border bg-surface p-5 shadow-sm sm:p-6">
         <div className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="text-sm font-semibold tracking-[0.16em] text-safety uppercase">
+            <p className="text-sm font-semibold tracking-[0.16em] text-safety-content uppercase">
               Private health context
             </p>
             <h2 className="mt-2 text-2xl font-bold tracking-tight">
@@ -388,7 +388,7 @@ export function HealthConstraints() {
                     <div className="flex flex-wrap items-center gap-2">
                       <span
                         aria-hidden="true"
-                        className="inline-flex size-9 items-center justify-center rounded-control bg-safety/10 text-safety"
+                        className="inline-flex size-9 items-center justify-center rounded-control bg-safety/10 text-safety-content"
                       >
                         <ShieldAlert className="size-4" strokeWidth={2} />
                       </span>
@@ -401,7 +401,7 @@ export function HealthConstraints() {
                       <span
                         className={`rounded-full border px-3 py-1 text-xs font-semibold ${
                           constraint.isActive
-                            ? "border-success/40 bg-success/10 text-success"
+                            ? "border-success/40 bg-success/10 text-success-content"
                             : "border-border bg-surface-muted text-muted-foreground"
                         }`}
                       >

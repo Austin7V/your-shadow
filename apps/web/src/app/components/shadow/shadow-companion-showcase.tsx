@@ -27,7 +27,7 @@ export function ShadowCompanionShowcase() {
       className="motion-enter rounded-xl border border-border bg-surface p-6 shadow-sm"
     >
       <div>
-        <p className="text-sm font-semibold text-primary">
+        <p className="text-sm font-semibold text-primary-content">
           Aurora Companion
         </p>
         <h2
@@ -67,7 +67,7 @@ export function ShadowCompanionShowcase() {
                   onClick={() => setSelectedState(state)}
                   className={`motion-press inline-flex min-h-11 items-center justify-center rounded-control border px-3 py-2 text-sm font-medium focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${
                     isSelected
-                      ? "border-primary bg-primary text-primary-foreground"
+                      ? "border-primary-action bg-primary-action text-primary-foreground"
                       : "border-border bg-surface text-muted-foreground hover:bg-surface-muted hover:text-foreground"
                   }`}
                 >

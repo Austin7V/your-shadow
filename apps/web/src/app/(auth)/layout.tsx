@@ -33,12 +33,12 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
             className="mb-8"
           />
 
-          <p className="text-sm font-semibold tracking-[0.18em] text-primary uppercase">
+          <p className="text-sm font-semibold tracking-[0.18em] text-primary-content uppercase">
             A space to keep going
           </p>
-          <h1 className="mt-4 text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.06] font-bold tracking-tight text-balance">
+          <p className="mt-4 text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.06] font-bold tracking-tight text-balance">
             Small steps become a rhythm you can trust.
-          </h1>
+          </p>
           <p className="mt-5 max-w-md text-lg leading-8 text-muted-foreground">
             Return to a clear view of your habits, your progress, and the next
             practical step for today.
@@ -48,7 +48,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
         <div className="relative z-10 flex max-w-lg items-start gap-3 text-sm leading-6 text-muted-foreground">
           <ShieldCheck
             aria-hidden="true"
-            className="mt-0.5 size-5 shrink-0 text-safety"
+            className="mt-0.5 size-5 shrink-0 text-safety-content"
             strokeWidth={2}
           />
           <p>

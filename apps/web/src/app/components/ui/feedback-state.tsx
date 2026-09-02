@@ -18,19 +18,19 @@ const toneClasses: Record<
 > = {
   error: {
     container: "border-error/40 bg-error/10",
-    icon: "bg-error/15 text-error",
+    icon: "bg-error/15 text-error-content",
   },
   safety: {
     container: "border-safety/40 bg-safety/10",
-    icon: "bg-safety/15 text-safety",
+    icon: "bg-safety/15 text-safety-content",
   },
   success: {
     container: "border-success/40 bg-success/10",
-    icon: "bg-success/15 text-success",
+    icon: "bg-success/15 text-success-content",
   },
   warning: {
     container: "border-warning/40 bg-warning/10",
-    icon: "bg-warning/15 text-warning",
+    icon: "bg-warning/15 text-warning-content",
   },
 };
 

@@ -49,7 +49,7 @@ export function OnboardingPageShell({
       <main className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-8 sm:py-12">
         <div className="motion-enter grid items-end gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
           <div className="max-w-3xl">
-            <p className="text-sm font-semibold tracking-[0.18em] text-primary uppercase">
+            <p className="text-sm font-semibold tracking-[0.18em] text-primary-content uppercase">
               Step {step} of {onboardingSteps.length}
             </p>
             <h1 className="mt-3 text-[clamp(2rem,6vw,3rem)] leading-[1.08] font-bold tracking-tight text-balance">
@@ -99,9 +99,9 @@ export function OnboardingPageShell({
                       aria-hidden="true"
                       className={`inline-flex size-7 items-center justify-center rounded-full text-xs font-bold ${
                         isComplete
-                          ? "border border-success/40 bg-success/10 text-success"
+                          ? "border border-success/40 bg-success/10 text-success-content"
                           : isCurrent
-                            ? "bg-primary text-primary-foreground"
+                            ? "bg-primary-action text-primary-foreground"
                             : "border border-border bg-surface"
                       }`}
                     >

@@ -65,7 +65,7 @@ export default function HomePage() {
             </Link>
             <Link
               href="/register"
-              className="motion-press hidden min-h-11 items-center justify-center rounded-control border border-primary bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:inline-flex"
+              className="motion-press hidden min-h-11 items-center justify-center rounded-control border border-primary-action bg-primary-action px-5 text-sm font-semibold text-primary-foreground shadow-sm hover:border-primary-action-hover hover:bg-primary-action-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring sm:inline-flex"
             >
               Create account
             </Link>
@@ -75,7 +75,7 @@ export default function HomePage() {
 
       <section className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 py-14 sm:px-8 sm:py-20 lg:grid-cols-[minmax(0,1.08fr)_minmax(22rem,0.92fr)] lg:px-12 lg:py-24">
         <div className="motion-enter max-w-3xl">
-          <p className="text-sm font-semibold tracking-[0.2em] text-primary uppercase">
+          <p className="text-sm font-semibold tracking-[0.2em] text-primary-content uppercase">
             Your personal wellness companion
           </p>
 
@@ -91,7 +91,7 @@ export default function HomePage() {
           <div className="mt-9 flex flex-col gap-3 sm:flex-row">
             <Link
               href="/register"
-              className="motion-press inline-flex min-h-12 items-center justify-center rounded-control border border-primary bg-primary px-6 py-3 text-center font-semibold text-primary-foreground shadow-sm hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+              className="motion-press inline-flex min-h-12 items-center justify-center rounded-control border border-primary-action bg-primary-action px-6 py-3 text-center font-semibold text-primary-foreground shadow-sm hover:border-primary-action-hover hover:bg-primary-action-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
             >
               Start your journey
             </Link>
@@ -107,7 +107,7 @@ export default function HomePage() {
           <div className="mt-7 flex max-w-2xl items-start gap-3 text-sm leading-6 text-muted-foreground">
             <ShieldCheck
               aria-hidden="true"
-              className="mt-0.5 size-5 shrink-0 text-safety"
+              className="mt-0.5 size-5 shrink-0 text-safety-content"
               strokeWidth={2}
             />
             <p>
@@ -132,7 +132,7 @@ export default function HomePage() {
             <div className="flex min-h-[22rem] flex-col items-center justify-center text-center sm:min-h-[26rem]">
               <ShadowOrb state="idle" size="large" showStatus={false} />
 
-              <p className="mt-7 text-sm font-semibold tracking-[0.16em] text-primary uppercase">
+              <p className="mt-7 text-sm font-semibold tracking-[0.16em] text-primary-content uppercase">
                 Shadow is here
               </p>
               <h2 className="mt-2 max-w-sm text-2xl font-bold tracking-tight text-balance sm:text-3xl">
@@ -153,7 +153,7 @@ export default function HomePage() {
       >
         <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-18 lg:px-12">
           <div className="max-w-2xl">
-            <p className="text-sm font-semibold tracking-[0.2em] text-primary uppercase">
+            <p className="text-sm font-semibold tracking-[0.2em] text-primary-content uppercase">
               Built around real life
             </p>
             <h2
@@ -174,7 +174,7 @@ export default function HomePage() {
                   as="article"
                   className="motion-enter"
                 >
-                  <span className="inline-flex size-11 items-center justify-center rounded-control bg-primary/10 text-primary">
+                  <span className="inline-flex size-11 items-center justify-center rounded-control bg-primary/10 text-primary-content">
                     <Icon aria-hidden="true" className="size-5" strokeWidth={2} />
                   </span>
                   <h3 className="mt-5 text-xl font-semibold">{area.title}</h3>
@@ -192,7 +192,7 @@ export default function HomePage() {
         <div className="flex flex-col gap-5 rounded-panel border border-safety/40 bg-safety/10 p-6 sm:flex-row sm:items-center sm:p-8">
           <span
             aria-hidden="true"
-            className="inline-flex size-11 shrink-0 items-center justify-center rounded-control bg-safety/15 text-safety"
+            className="inline-flex size-11 shrink-0 items-center justify-center rounded-control bg-safety/15 text-safety-content"
           >
             <ShieldCheck className="size-6" strokeWidth={2} />
           </span>

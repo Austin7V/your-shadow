@@ -72,7 +72,7 @@ export function Scale({
         </label>
         <output
           htmlFor={fieldId}
-          className="tabular-nums rounded-compact bg-surface-muted px-2.5 py-1 text-sm font-semibold text-primary"
+          className="tabular-nums rounded-compact bg-surface-muted px-2.5 py-1 text-sm font-semibold text-primary-content"
         >
           {currentValue}
         </output>

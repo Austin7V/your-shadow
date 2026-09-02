@@ -106,7 +106,7 @@ export function WeightHistory() {
 
       <section className="rounded-card border border-border bg-surface p-5 shadow-sm sm:p-6">
         <div className="border-b border-border pb-5">
-          <p className="text-sm font-semibold tracking-[0.16em] text-primary uppercase">
+          <p className="text-sm font-semibold tracking-[0.16em] text-primary-content uppercase">
             Progress context
           </p>
           <h2 className="mt-2 text-2xl font-bold tracking-tight">
@@ -215,7 +215,7 @@ export function WeightHistory() {
             <div className="flex items-start gap-3">
               <span
                 aria-hidden="true"
-                className="inline-flex size-10 shrink-0 items-center justify-center rounded-control bg-surface text-primary"
+                className="inline-flex size-10 shrink-0 items-center justify-center rounded-control bg-surface text-primary-content"
               >
                 <Scale className="size-5" strokeWidth={2} />
               </span>

@@ -201,7 +201,7 @@ export function PersonalDataForm() {
         <div className="flex items-start gap-3">
           <span
             aria-hidden="true"
-            className="inline-flex size-11 shrink-0 items-center justify-center rounded-control bg-primary/10 text-primary"
+            className="inline-flex size-11 shrink-0 items-center justify-center rounded-control bg-primary/10 text-primary-content"
           >
             <ClipboardCheck className="size-5" strokeWidth={2} />
           </span>

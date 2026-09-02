@@ -105,12 +105,12 @@ function UnavailableNavigationItem({
         aria-disabled="true"
         aria-label="Ask Shadow. Coming soon."
         title="Ask Shadow is coming soon"
-        className="group relative flex min-h-[4.5rem] min-w-0 cursor-not-allowed flex-col items-center justify-center gap-1 px-1 text-xs font-medium text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
+        className="group relative flex min-h-[4.5rem] min-w-0 cursor-not-allowed flex-col items-center justify-center gap-1 text-xs font-medium text-muted-foreground focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring"
       >
         <span className="relative -mt-5 inline-flex size-12 items-center justify-center rounded-full border border-border bg-surface-raised shadow-md">
           <ShadowOrb state="offline" size="compact" />
         </span>
-        <span className="max-w-full truncate">{item.label}</span>
+        <span className="max-w-full text-center leading-3">{item.label}</span>
       </button>
     );
   }
@@ -163,14 +163,14 @@ function AvailableNavigationItem({
       <Link
         href={item.href}
         aria-current={isActive ? "page" : undefined}
-        className={`flex min-h-[4.5rem] min-w-0 flex-col items-center justify-center gap-1 px-1 text-xs transition-colors duration-control focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring ${
+        className={`flex min-h-[4.5rem] min-w-0 flex-col items-center justify-center gap-1 text-xs transition-colors duration-control focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ring ${
           isActive
-            ? "font-semibold text-primary"
+            ? "font-semibold text-primary-content"
             : "font-medium text-muted-foreground hover:text-foreground"
         }`}
       >
         <Icon aria-hidden="true" className="size-5" strokeWidth={2} />
-        <span className="max-w-full truncate">{item.label}</span>
+        <span className="max-w-full text-center leading-3">{item.label}</span>
       </Link>
     );
   }
@@ -183,7 +183,7 @@ function AvailableNavigationItem({
         title={item.label}
         className={`flex min-h-14 w-full flex-col items-center justify-center gap-1 rounded-control px-1 text-[0.75rem] transition-colors duration-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${
           isActive
-            ? "bg-primary text-primary-foreground"
+            ? "bg-primary-action text-primary-foreground"
             : "text-muted-foreground hover:bg-surface-muted hover:text-foreground"
         }`}
       >
@@ -199,7 +199,7 @@ function AvailableNavigationItem({
       aria-current={isActive ? "page" : undefined}
       className={`flex min-h-11 w-full items-center gap-3 rounded-control px-3 text-sm transition-colors duration-control focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring ${
         isActive
-          ? "bg-primary font-semibold text-primary-foreground"
+          ? "bg-primary-action font-semibold text-primary-foreground"
           : "font-medium text-muted-foreground hover:bg-surface-muted hover:text-foreground"
       }`}
     >

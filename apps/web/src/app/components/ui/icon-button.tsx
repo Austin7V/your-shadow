@@ -19,7 +19,7 @@ const variantClasses: Record<IconButtonVariant, string> = {
   quiet:
     "border-transparent bg-transparent text-foreground hover:bg-surface-muted focus-visible:outline-ring",
   danger:
-    "border-error/50 bg-error/10 text-error hover:bg-error/15 focus-visible:outline-error",
+    "border-error/50 bg-error/10 text-error-content hover:bg-error/15 focus-visible:outline-error",
 };
 
 export function IconButton({

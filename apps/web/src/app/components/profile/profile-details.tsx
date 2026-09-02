@@ -126,7 +126,7 @@ function ProfileEditForm({
       <div className="flex items-start gap-3 rounded-control bg-surface-muted p-4 text-sm leading-6 text-muted-foreground">
         <LockKeyhole
           aria-hidden="true"
-          className="mt-0.5 size-5 shrink-0 text-safety"
+          className="mt-0.5 size-5 shrink-0 text-safety-content"
           strokeWidth={2}
         />
         <p>
@@ -266,7 +266,7 @@ export function ProfileDetails() {
       <section className="rounded-card border border-border bg-surface p-5 shadow-sm sm:p-6">
         <div className="flex flex-col gap-4 border-b border-border pb-5 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="text-sm font-semibold tracking-[0.16em] text-primary uppercase">
+            <p className="text-sm font-semibold tracking-[0.16em] text-primary-content uppercase">
               Personal context
             </p>
             <h2 className="mt-2 text-2xl font-bold tracking-tight">
@@ -310,7 +310,7 @@ export function ProfileDetails() {
                 <div className="flex items-center gap-3">
                   <span
                     aria-hidden="true"
-                    className="inline-flex size-10 items-center justify-center rounded-control bg-surface text-primary"
+                    className="inline-flex size-10 items-center justify-center rounded-control bg-surface text-primary-content"
                   >
                     <UserRound className="size-5" strokeWidth={2} />
                   </span>
@@ -339,7 +339,7 @@ export function ProfileDetails() {
                 <div className="flex items-center gap-3">
                   <span
                     aria-hidden="true"
-                    className="inline-flex size-10 items-center justify-center rounded-control bg-surface text-primary"
+                    className="inline-flex size-10 items-center justify-center rounded-control bg-surface text-primary-content"
                   >
                     <Target className="size-5" strokeWidth={2} />
                   </span>

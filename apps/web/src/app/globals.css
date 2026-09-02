@@ -26,6 +26,34 @@
   --border: #dde8e3;
   --ring: #087f74;
 
+  --primary-content: color-mix(
+    in srgb,
+    var(--primary) 72%,
+    var(--foreground)
+  );
+  --primary-action: var(--primary-content);
+  --primary-action-hover: var(--primary-hover);
+  --success-content: color-mix(
+    in srgb,
+    var(--success) 87%,
+    var(--foreground)
+  );
+  --warning-content: color-mix(
+    in srgb,
+    var(--warning) 85%,
+    var(--foreground)
+  );
+  --error-content: color-mix(
+    in srgb,
+    var(--error) 90%,
+    var(--foreground)
+  );
+  --safety-content: color-mix(
+    in srgb,
+    var(--safety) 92%,
+    var(--foreground)
+  );
+
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -78,6 +106,14 @@
   --border: #29404a;
   --ring: #7cebdd;
 
+  --primary-content: var(--primary);
+  --primary-action: var(--primary);
+  --primary-action-hover: var(--primary-hover);
+  --success-content: var(--success);
+  --warning-content: var(--warning);
+  --error-content: var(--error);
+  --safety-content: var(--safety);
+
   --elevation-sm: 0 1px 2px rgb(0 0 0 / 0.16);
   --elevation-md: 0 8px 24px rgb(0 0 0 / 0.18);
   --elevation-lg: 0 18px 48px rgb(0 0 0 / 0.22);
@@ -98,19 +134,26 @@
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-content: var(--primary-content);
+  --color-primary-action: var(--primary-action);
+  --color-primary-action-hover: var(--primary-action-hover);
 
   --color-progress: var(--progress);
   --color-analytics: var(--analytics);
   --color-accent-warm: var(--accent-warm);
   --color-success: var(--success);
+  --color-success-content: var(--success-content);
   --color-warning: var(--warning);
+  --color-warning-content: var(--warning-content);
   --color-error: var(--error);
+  --color-error-content: var(--error-content);
   --color-safety: var(--safety);
+  --color-safety-content: var(--safety-content);
 
   --color-border: var(--border);
   --color-ring: var(--ring);
 
-  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-manrope, ui-sans-serif), system-ui, sans-serif;
 
   --radius-sm: var(--shape-radius-compact);
   --radius-md: var(--shape-radius-control);

@@ -7,7 +7,7 @@ type FieldMessageProps = {
 export function FieldMessage({ id, error, hint }: FieldMessageProps) {
   if (error) {
     return (
-      <p id={id} className="mt-2 text-sm text-error" role="alert">
+      <p id={id} className="mt-2 text-sm text-error-content" role="alert">
         {error}
       </p>
     );

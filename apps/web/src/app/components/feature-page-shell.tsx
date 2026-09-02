@@ -22,7 +22,7 @@ export function FeaturePageShell({
       <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
         <div className="max-w-2xl">
           <div className="flex flex-wrap items-center gap-3">
-            <p className="text-sm font-semibold tracking-[0.2em] text-primary uppercase">
+            <p className="text-sm font-semibold tracking-[0.2em] text-primary-content uppercase">
               {eyebrow}
             </p>
 

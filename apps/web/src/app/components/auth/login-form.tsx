@@ -100,7 +100,7 @@ export function LoginForm({ registrationCompleted }: LoginFormProps) {
           Do not have an account?{" "}
           <Link
             href="/register"
-            className="inline-flex min-h-11 items-center rounded-compact font-semibold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="inline-flex min-h-11 items-center rounded-compact font-semibold text-primary-content hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             Create one
           </Link>
@@ -115,7 +115,7 @@ export function LoginForm({ registrationCompleted }: LoginFormProps) {
           >
             <CircleCheck
               aria-hidden="true"
-              className="mt-0.5 size-5 shrink-0 text-success"
+              className="mt-0.5 size-5 shrink-0 text-success-content"
               strokeWidth={2}
             />
             <p>Your account was created successfully. You can now log in.</p>
@@ -129,7 +129,7 @@ export function LoginForm({ registrationCompleted }: LoginFormProps) {
           >
             <CircleAlert
               aria-hidden="true"
-              className="mt-0.5 size-5 shrink-0 text-error"
+              className="mt-0.5 size-5 shrink-0 text-error-content"
               strokeWidth={2}
             />
             <p>{formError}</p>

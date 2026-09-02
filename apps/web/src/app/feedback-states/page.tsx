@@ -23,7 +23,7 @@ export default function FeedbackStatesPage() {
   return (
     <main className="mx-auto max-w-3xl space-y-6 px-6 py-10">
       <div>
-        <p className="text-sm font-semibold tracking-[0.2em] text-primary uppercase">
+        <p className="text-sm font-semibold tracking-[0.2em] text-primary-content uppercase">
           UI Foundation
         </p>
 
@@ -101,7 +101,7 @@ export default function FeedbackStatesPage() {
       </DestructiveConfirmation>
 
       {confirmationMessage ? (
-        <p role="status" className="text-sm font-medium text-success">
+        <p role="status" className="text-sm font-medium text-success-content">
           {confirmationMessage}
         </p>
       ) : null}
@@ -111,7 +111,7 @@ export default function FeedbackStatesPage() {
         className="motion-enter rounded-lg border border-border bg-surface p-6 shadow-sm"
       >
         <div>
-          <p className="text-sm font-semibold text-primary">
+          <p className="text-sm font-semibold text-primary-content">
             Motion foundation
           </p>
           <h2
@@ -138,7 +138,7 @@ export default function FeedbackStatesPage() {
 
         <div
           role="status"
-          className="motion-complete mt-6 rounded-md border border-success/40 bg-success/10 p-4 text-sm font-medium text-success"
+          className="motion-complete mt-6 rounded-md border border-success/40 bg-success/10 p-4 text-sm font-medium text-success-content"
         >
           Completion reactions are brief and do not change layout.
         </div>

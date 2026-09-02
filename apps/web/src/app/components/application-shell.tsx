@@ -24,7 +24,7 @@ function BrandLink({ compact = false }: { compact?: boolean }) {
     <Link
       href="/dashboard"
       aria-label="Your Shadow Today"
-      className="inline-flex min-h-11 items-center gap-3 rounded-control font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+      className="inline-flex min-h-11 min-w-11 items-center justify-center gap-3 rounded-control font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
       <BrandMark />
       {compact ? null : <span>Your Shadow</span>}
@@ -118,7 +118,7 @@ export function ApplicationShell({ children }: ApplicationShellProps) {
               <Link
                 href="/dashboard"
                 aria-label="Your Shadow Today"
-                className="inline-flex min-h-11 items-center gap-2 rounded-control font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center gap-2 rounded-control font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
                 <BrandMark />
                 <span className="hidden sm:inline">Your Shadow</span>
@@ -142,7 +142,7 @@ export function ApplicationShell({ children }: ApplicationShellProps) {
                 href="/account"
                 aria-label={`Open profile for ${email}`}
                 title={email}
-                className="inline-flex size-11 items-center justify-center rounded-full bg-primary text-sm font-bold text-primary-foreground shadow-sm transition-[background-color,transform] duration-control hover:bg-primary-hover active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+                className="inline-flex size-11 items-center justify-center rounded-full bg-primary-action text-sm font-bold text-primary-foreground shadow-sm transition-[background-color,transform] duration-control hover:bg-primary-action-hover active:scale-[0.96] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
               >
                 {avatarLabel}
               </Link>
@@ -163,7 +163,7 @@ export function ApplicationShell({ children }: ApplicationShellProps) {
           {signOutError ? (
             <p
               role="alert"
-              className="border-t border-error/30 bg-error/10 px-4 py-2 text-center text-sm text-error"
+              className="border-t border-error/30 bg-error/10 px-4 py-2 text-center text-sm text-error-content"
             >
               {signOutError}
             </p>

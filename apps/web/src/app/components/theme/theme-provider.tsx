@@ -8,6 +8,11 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from "react";
+import {
+  DARK_THEME_COLOR,
+  LIGHT_THEME_COLOR,
+  THEME_STORAGE_KEY,
+} from "@/app/components/theme/theme-bootstrap";
 
 export type ThemePreference = "light" | "dark" | "system";
 export type ResolvedTheme = Exclude<ThemePreference, "system">;
@@ -24,12 +29,8 @@ type ThemeProviderProps = {
 
 type ThemeSnapshot = `${ThemePreference}:${ResolvedTheme}`;
 
-export const THEME_STORAGE_KEY = "your-shadow:theme";
-
 const THEME_CHANGE_EVENT = "your-shadow:theme-change";
 const THEME_TRANSITION_DURATION_MS = 180;
-const LIGHT_THEME_COLOR = "#F7FAF8";
-const DARK_THEME_COLOR = "#08131B";
 const DARK_MODE_QUERY = "(prefers-color-scheme: dark)";
 const SERVER_THEME_SNAPSHOT: ThemeSnapshot = "system:light";
 

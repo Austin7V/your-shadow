@@ -25,12 +25,12 @@ function PrivacySummary() {
       <div className="flex items-start gap-4">
         <span
           aria-hidden="true"
-          className="inline-flex size-11 shrink-0 items-center justify-center rounded-control bg-safety/10 text-safety"
+          className="inline-flex size-11 shrink-0 items-center justify-center rounded-control bg-safety/10 text-safety-content"
         >
           <LockKeyhole className="size-5" strokeWidth={2} />
         </span>
         <div>
-          <p className="text-sm font-semibold tracking-[0.16em] text-safety uppercase">
+          <p className="text-sm font-semibold tracking-[0.16em] text-safety-content uppercase">
             Privacy by design
           </p>
           <h2
@@ -50,7 +50,7 @@ function PrivacySummary() {
         <li className="flex items-start gap-3">
           <ShieldCheck
             aria-hidden="true"
-            className="mt-0.5 size-5 shrink-0 text-success"
+            className="mt-0.5 size-5 shrink-0 text-success-content"
             strokeWidth={2}
           />
           <span>Stored profile, health, and weight values are encrypted by the API.</span>
@@ -58,7 +58,7 @@ function PrivacySummary() {
         <li className="flex items-start gap-3">
           <ShieldCheck
             aria-hidden="true"
-            className="mt-0.5 size-5 shrink-0 text-success"
+            className="mt-0.5 size-5 shrink-0 text-success-content"
             strokeWidth={2}
           />
           <span>Private data requests are scoped to the signed-in account on the server.</span>

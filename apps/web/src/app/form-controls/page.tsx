@@ -21,7 +21,7 @@ export default function FormControlsPage() {
   return (
     <main className="mx-auto max-w-5xl space-y-8 px-4 py-10 sm:px-6">
       <header>
-        <p className="text-sm font-semibold tracking-[0.18em] text-primary uppercase">
+        <p className="text-sm font-semibold tracking-[0.18em] text-primary-content uppercase">
           UI foundation
         </p>
         <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
@@ -195,7 +195,7 @@ export default function FormControlsPage() {
             </p>
           </Card>
           <Card variant="destructive">
-            <h3 className="font-semibold text-error">Destructive</h3>
+            <h3 className="font-semibold text-error-content">Destructive</h3>
             <p className="mt-2 text-sm text-muted-foreground">
               Reserved danger-zone surface.
             </p>

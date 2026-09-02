@@ -13,7 +13,7 @@ export function LoadingState({
       aria-live="polite"
       className="motion-enter flex min-h-48 flex-col items-center justify-center gap-4 rounded-card border border-border bg-surface p-6 text-center shadow-sm sm:p-8"
     >
-      <span className="inline-flex size-11 items-center justify-center rounded-full bg-primary/10 text-primary">
+      <span className="inline-flex size-11 items-center justify-center rounded-full bg-primary/10 text-primary-content">
         <LoaderCircle
           aria-hidden="true"
           className="size-6 animate-spin"

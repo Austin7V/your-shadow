@@ -259,7 +259,7 @@ export function HealthDataForm() {
       >
         {draft.constraints.length === 0 ? (
           <div className="rounded-card border border-dashed border-border bg-surface-muted p-6 text-center">
-            <span className="mx-auto inline-flex size-11 items-center justify-center rounded-control bg-surface text-primary">
+            <span className="mx-auto inline-flex size-11 items-center justify-center rounded-control bg-surface text-primary-content">
               <ListPlus aria-hidden="true" className="size-5" strokeWidth={2} />
             </span>
             <p className="mt-4 font-semibold text-foreground">
@@ -284,7 +284,7 @@ export function HealthDataForm() {
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-xs font-semibold tracking-[0.16em] text-primary uppercase">
+                  <p className="text-xs font-semibold tracking-[0.16em] text-primary-content uppercase">
                     Health context
                   </p>
                   <h3 id={titleId} className="mt-1 text-lg font-semibold">

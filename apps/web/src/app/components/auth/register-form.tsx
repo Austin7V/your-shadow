@@ -108,7 +108,7 @@ export function RegisterForm() {
           Already have an account?{" "}
           <Link
             href="/login"
-            className="inline-flex min-h-11 items-center rounded-compact font-semibold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-compact px-1 font-semibold text-primary-content hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             Log in
           </Link>
@@ -123,7 +123,7 @@ export function RegisterForm() {
           >
             <CircleAlert
               aria-hidden="true"
-              className="mt-0.5 size-5 shrink-0 text-error"
+              className="mt-0.5 size-5 shrink-0 text-error-content"
               strokeWidth={2}
             />
             <p>{formError}</p>
@@ -190,7 +190,7 @@ export function RegisterForm() {
         <div className="flex items-start gap-3 rounded-control bg-surface-muted p-4 text-sm leading-6 text-muted-foreground">
           <ShieldCheck
             aria-hidden="true"
-            className="mt-0.5 size-5 shrink-0 text-safety"
+            className="mt-0.5 size-5 shrink-0 text-safety-content"
             strokeWidth={2}
           />
           <p>

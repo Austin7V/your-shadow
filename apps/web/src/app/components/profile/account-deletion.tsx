@@ -114,13 +114,13 @@ export function AccountDeletion() {
           <div className="flex max-w-3xl items-start gap-4">
             <span
               aria-hidden="true"
-              className="inline-flex size-11 shrink-0 items-center justify-center rounded-control bg-error/10 text-error"
+              className="inline-flex size-11 shrink-0 items-center justify-center rounded-control bg-error/10 text-error-content"
             >
               <ShieldAlert className="size-6" strokeWidth={2} />
             </span>
 
             <div>
-              <p className="text-sm font-semibold tracking-[0.16em] text-error uppercase">
+              <p className="text-sm font-semibold tracking-[0.16em] text-error-content uppercase">
                 Danger zone
               </p>
               <h2
@@ -196,7 +196,7 @@ export function AccountDeletion() {
                   >
                     <Icon
                       aria-hidden="true"
-                      className="mt-0.5 size-4 shrink-0 text-error"
+                      className="mt-0.5 size-4 shrink-0 text-error-content"
                       strokeWidth={2}
                     />
                     <span>{item.label}</span>

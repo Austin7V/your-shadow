@@ -20,13 +20,13 @@ export function DestructiveConfirmation({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
         <span
           aria-hidden="true"
-          className="inline-flex size-11 shrink-0 items-center justify-center rounded-control bg-error/10 text-error"
+          className="inline-flex size-11 shrink-0 items-center justify-center rounded-control bg-error/10 text-error-content"
         >
           <Trash2 className="size-6" strokeWidth={2} />
         </span>
 
         <div className="min-w-0 flex-1">
-          <h2 className="text-xl font-semibold text-error">{title}</h2>
+          <h2 className="text-xl font-semibold text-error-content">{title}</h2>
           <p className="mt-1.5 text-base leading-7 text-muted-foreground">
             {description}
           </p>

@@ -69,6 +69,16 @@ State colors are not interchangeable:
 
 Opacity variants must derive from semantic tokens. Text contrast must be tested on the actual composited background.
 
+### Readable colour aliases
+
+The approved palette above remains the source of truth for identity and state
+colour. When a semantic hue carries text, an essential icon, or small text on a
+filled control, use its `*-content` alias. Filled primary controls use
+`primary-action` and `primary-action-hover`. These aliases are derived from the
+approved hue and `foreground` in light mode, and resolve to the approved hue in
+dark mode, so text and essential graphics meet WCAG 2.2 AA on both plain and
+10% tinted surfaces without changing the brand palette.
+
 ## Typography
 
 The product typeface is **Manrope** with a system sans-serif fallback. Supported weights are intentionally limited:
