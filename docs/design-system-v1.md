@@ -1,9 +1,9 @@
 # Your Shadow Design System v1.0
 
-Status: approved  
-Applies to: Web MVP and future mobile clients  
-Implementation scope: tickets 2.10–2.18  
-Last updated: 2026-09-01
+- Status: approved
+- Applies to: Web MVP and future mobile clients
+- Implementation scope: tickets 2.10–2.18
+- Last updated: 2026-09-01
 
 ## Purpose
 

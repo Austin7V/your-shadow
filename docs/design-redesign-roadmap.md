@@ -1,8 +1,8 @@
 # Your Shadow Design Redesign Roadmap
 
-Status: implementation plan for Design System v1.0  
-Branch: `2.10-2.18-implement-design-system-v1`  
-Scope: tickets 2.10–2.18 before Epic 4
+- Status: implementation plan for Design System v1.0
+- Branch: `2.10-2.18-implement-design-system-v1`
+- Scope: tickets 2.10–2.18 before Epic 4
 
 ## Objective
 
