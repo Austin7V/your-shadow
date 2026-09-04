@@ -31,5 +31,4 @@ export class DisabledAiProvider implements AiProvider {
       false,
     );
   }
-
 }

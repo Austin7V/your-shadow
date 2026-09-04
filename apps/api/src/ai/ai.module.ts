@@ -34,7 +34,6 @@ export function selectAiProvider(
       provide: OPENAI_CLIENT,
       inject: [ConfigService],
       useFactory: (configService: ConfigService): OpenAI | null => {
-
         if (configService.get<string>('AI_PROVIDER', 'disabled') !== 'openai') {
           return null;
         }

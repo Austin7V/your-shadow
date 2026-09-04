@@ -57,7 +57,6 @@ describe('selectAiProvider', () => {
       )
       .compile();
 
-
     expect(moduleRef.get<AiProvider>(AI_PROVIDER)).toBeInstanceOf(
       OpenAiProvider,
     );
