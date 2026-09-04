@@ -9,6 +9,7 @@ import { envValidationSchema } from './config/env.validation';
 import { HealthController } from './health/health.controller';
 import { AuthModule } from './auth/auth.module';
 import { ProfilesModule } from './profiles/profiles.module';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { ProfilesModule } from './profiles/profiles.module';
       }),
     }),
     TerminusModule,
+    AiModule,
     AuthModule,
     ProfilesModule,
   ],
