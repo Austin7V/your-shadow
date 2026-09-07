@@ -82,6 +82,9 @@
     "packages/contracts": {
       "name": "@your-shadow/contracts",
       "version": "0.1.0",
+      "dependencies": {
+        "zod": "^4",
+      },
       "devDependencies": {
         "typescript": "^7.0.2",
       },
