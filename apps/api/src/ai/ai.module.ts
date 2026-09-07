@@ -7,6 +7,7 @@ import { AI_PROVIDER, AiProvider } from './ai-provider.contract';
 import { DisabledAiProvider } from './providers/disabled-ai.provider';
 import { OpenAiProvider } from './providers/openai.provider';
 import { OPENAI_CLIENT } from './tokens/openai-client.token';
+import { SafetyRuleService } from './safety/safety-rule.service';
 
 export function selectAiProvider(
   providerName: string,
@@ -30,6 +31,7 @@ export function selectAiProvider(
     AiCapabilityConfig,
     DisabledAiProvider,
     OpenAiProvider,
+    SafetyRuleService,
     {
       provide: OPENAI_CLIENT,
       inject: [ConfigService],
