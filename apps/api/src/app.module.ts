@@ -3,13 +3,14 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TerminusModule } from '@nestjs/terminus';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AiModule } from './ai/ai.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
 import { envValidationSchema } from './config/env.validation';
 import { HealthController } from './health/health.controller';
-import { AuthModule } from './auth/auth.module';
+import { PlansModule } from './plans/plans.module';
 import { ProfilesModule } from './profiles/profiles.module';
-import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { AiModule } from './ai/ai.module';
     AiModule,
     AuthModule,
     ProfilesModule,
+    PlansModule,
   ],
   controllers: [AppController, HealthController],
   providers: [AppService],

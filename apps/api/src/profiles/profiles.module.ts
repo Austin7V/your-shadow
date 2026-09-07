@@ -18,5 +18,6 @@ import { WeightEntriesService } from './services/weight-entries.service';
   ],
   controllers: [ProfilesController],
   providers: [ProfilesService, WeightEntriesService, HealthConstraintsService],
+  exports: [ProfilesService],
 })
 export class ProfilesModule {}
