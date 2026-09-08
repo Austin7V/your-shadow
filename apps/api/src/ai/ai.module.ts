@@ -6,8 +6,9 @@ import { AiCapabilityConfig } from './ai-capability.config';
 import { AI_PROVIDER, AiProvider } from './ai-provider.contract';
 import { DisabledAiProvider } from './providers/disabled-ai.provider';
 import { OpenAiProvider } from './providers/openai.provider';
-import { OPENAI_CLIENT } from './tokens/openai-client.token';
 import { SafetyRuleService } from './safety/safety-rule.service';
+import { OPENAI_CLIENT } from './tokens/openai-client.token';
+import { AiUsageRecorderService } from './usage/ai-usage-recorder.service';
 
 export function selectAiProvider(
   providerName: string,
@@ -29,6 +30,7 @@ export function selectAiProvider(
   imports: [ConfigModule],
   providers: [
     AiCapabilityConfig,
+    AiUsageRecorderService,
     DisabledAiProvider,
     OpenAiProvider,
     SafetyRuleService,
@@ -62,6 +64,11 @@ export function selectAiProvider(
         ),
     },
   ],
-  exports: [AI_PROVIDER, AiCapabilityConfig],
+  exports: [
+    AI_PROVIDER,
+    AiCapabilityConfig,
+    AiUsageRecorderService,
+    SafetyRuleService,
+  ],
 })
 export class AiModule {}
