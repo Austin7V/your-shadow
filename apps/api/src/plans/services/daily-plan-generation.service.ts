@@ -11,18 +11,14 @@ import {
 import { DataSource, Repository } from 'typeorm';
 
 import {
-  buildDailyPlanAiContext,
-  type DailyPlanAiContextInput,
-} from '../../ai/context/ai-context.builder';
-import {
   AI_PROVIDER,
   AiCapability,
   type AiProvider,
 } from '../../ai/ai-provider.contract';
 import {
-  AiProviderError,
-  AiProviderErrorCode,
-} from '../../ai/ai-provider.error';
+  buildDailyPlanAiContext,
+  type DailyPlanAiContextInput,
+} from '../../ai/context/ai-context.builder';
 import {
   SafetyAction,
   SafetyCode,
@@ -40,10 +36,23 @@ import {
   type PlanItemPayload,
   type PlanItemType,
 } from '../entities/plan-item.entity';
+import {
+  DAILY_PLAN_FALLBACK_USER_MESSAGE,
+  DailyPlanFallbackBuilder,
+  resolveDailyPlanFallbackReason,
+} from '../fallback/daily-plan-fallback.builder';
 import { DailyPlanRuleService } from '../rules/daily-plan-rule.service';
 import type { DailyPlanRuleItem } from '../rules/daily-plan-rule.types';
-import type { DailyPlanGenerationInput } from '../types/daily-plan-generation.types';
+import {
+  DailyPlanGenerationMode,
+  type DailyPlanGenerationInput,
+  type DailyPlanGenerationResult,
+} from '../types/daily-plan-generation.types';
 import { LocalDateService } from './local-date.service';
+import {
+  AiProviderError,
+  AiProviderErrorCode,
+} from '../../ai/ai-provider.error';
 
 const DAILY_PLAN_GENERATION_INSTRUCTIONS = [
   'Return exactly three daily plan items.',
@@ -75,13 +84,14 @@ export class DailyPlanGenerationService {
     private readonly localDateService: LocalDateService,
     private readonly safetyRuleService: SafetyRuleService,
     private readonly dailyPlanRuleService: DailyPlanRuleService,
+    private readonly dailyPlanFallbackBuilder: DailyPlanFallbackBuilder,
     private readonly aiUsageRecorderService: AiUsageRecorderService,
   ) {}
 
   async generateForUser(
     userId: string,
     input: DailyPlanGenerationInput,
-  ): Promise<DailyPlan> {
+  ): Promise<DailyPlanGenerationResult> {
     const profile = await this.profilesService.getProfile(userId);
 
     const localDate = this.localDateService.resolveLocalDate(
@@ -92,7 +102,7 @@ export class DailyPlanGenerationService {
     const existingPlan = await this.findExistingPlan(userId, localDate);
 
     if (existingPlan !== null) {
-      return existingPlan;
+      return this.createExistingPlanResult(existingPlan);
     }
 
     const safetyDecision = this.safetyRuleService.evaluateBeforeGeneration(
@@ -109,6 +119,9 @@ export class DailyPlanGenerationService {
 
     let schemaVersion = AI_OUTPUT_SCHEMA_VERSIONS.dailyPlan;
     let domainItems: DailyPlanDomainItem[] = basePlan;
+    let mode = DailyPlanGenerationMode.Rules;
+    let userMessage: string | null = null;
+    let fallbackReason: DailyPlanGenerationResult['fallbackReason'] = null;
 
     if (safetyDecision.shouldGenerate) {
       const contextInput: DailyPlanAiContextInput = {
@@ -121,37 +134,77 @@ export class DailyPlanGenerationService {
 
       const context = buildDailyPlanAiContext(contextInput);
 
-      const generationResult =
-        await this.aiProvider.generateStructured<unknown>({
-          capability: AiCapability.DailyPlan,
-          instructions: DAILY_PLAN_GENERATION_INSTRUCTIONS,
-          input: JSON.stringify({
-            localDate,
-            context,
-            deterministicPlan: basePlan,
-          }),
-          responseFormat: DAILY_PLAN_RESPONSE_FORMAT,
-        });
+      try {
+        const generationResult =
+          await this.aiProvider.generateStructured<unknown>({
+            capability: AiCapability.DailyPlan,
+            instructions: DAILY_PLAN_GENERATION_INSTRUCTIONS,
+            input: JSON.stringify({
+              localDate,
+              context,
+              deterministicPlan: basePlan,
+            }),
+            responseFormat: DAILY_PLAN_RESPONSE_FORMAT,
+          });
 
-      this.aiUsageRecorderService.record(
-        AiCapability.DailyPlan,
-        generationResult.usage,
-      );
+        this.aiUsageRecorderService.record(
+          AiCapability.DailyPlan,
+          generationResult.usage,
+        );
 
-      const validatedOutput = validateAiOutput(
-        dailyPlanOutputSchema,
-        generationResult.output,
-      );
+        const validatedOutput = validateAiOutput(
+          dailyPlanOutputSchema,
+          generationResult.output,
+        );
 
-      schemaVersion = validatedOutput.schemaVersion;
-      domainItems = this.mergeValidatedOutput(
-        validatedOutput,
-        basePlan,
-        safetyDecision,
-      );
+        schemaVersion = validatedOutput.schemaVersion;
+        domainItems = this.mergeValidatedOutput(
+          validatedOutput,
+          basePlan,
+          safetyDecision,
+        );
+        mode = DailyPlanGenerationMode.Ai;
+      } catch (error) {
+        /*
+         * Только нормализованные AI/schema errors переводятся в fallback.
+         * Ошибки кода и инфраструктуры продолжают выбрасываться вызывающему коду.
+         */
+        const resolvedFallbackReason = resolveDailyPlanFallbackReason(error);
+
+        if (resolvedFallbackReason === null) {
+          throw error;
+        }
+
+        const fallback = this.dailyPlanFallbackBuilder.create(
+          basePlan,
+          resolvedFallbackReason,
+        );
+
+        this.aiUsageRecorderService.recordFailure(
+          AiCapability.DailyPlan,
+          fallback.reason,
+        );
+
+        domainItems = [...fallback.items];
+        mode = DailyPlanGenerationMode.Fallback;
+        userMessage = fallback.userMessage;
+        fallbackReason = fallback.reason;
+      }
     }
 
-    return this.persistPlan(userId, localDate, schemaVersion, domainItems);
+    const plan = await this.persistPlan(
+      userId,
+      localDate,
+      schemaVersion,
+      domainItems,
+    );
+
+    return {
+      plan,
+      mode,
+      userMessage,
+      fallbackReason,
+    };
   }
 
   private resolveSafetyCodes(
@@ -356,6 +409,34 @@ export class DailyPlanGenerationService {
     return [...items].sort(
       (firstItem, secondItem) => firstItem.order - secondItem.order,
     );
+  }
+
+  private createExistingPlanResult(plan: DailyPlan): DailyPlanGenerationResult {
+    const containsFallbackItems = plan.items.some(
+      (item) => item.source === PlanItemSource.Fallback,
+    );
+
+    if (containsFallbackItems) {
+      return {
+        plan,
+        mode: DailyPlanGenerationMode.Fallback,
+        userMessage: DAILY_PLAN_FALLBACK_USER_MESSAGE,
+        fallbackReason: null,
+      };
+    }
+
+    const containsAiItems = plan.items.some(
+      (item) => item.source === PlanItemSource.Ai,
+    );
+
+    return {
+      plan,
+      mode: containsAiItems
+        ? DailyPlanGenerationMode.Ai
+        : DailyPlanGenerationMode.Rules,
+      userMessage: null,
+      fallbackReason: null,
+    };
   }
 
   private createInvalidResponseError(message: string): AiProviderError {

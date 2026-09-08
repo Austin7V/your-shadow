@@ -14,6 +14,12 @@ export interface SafeAiUsageRecord {
   readonly durationMs: number;
 }
 
+export interface SafeAiFailureRecord {
+  readonly event: 'ai_provider_failure';
+  readonly capability: AiCapability;
+  readonly code: string;
+}
+
 export function createSafeAiUsageRecord(
   capability: AiCapability,
   usage: AiUsageMetadata,
@@ -31,11 +37,26 @@ export function createSafeAiUsageRecord(
   };
 }
 
+export function createSafeAiFailureRecord(
+  capability: AiCapability,
+  code: string,
+): SafeAiFailureRecord {
+  return {
+    event: 'ai_provider_failure',
+    capability,
+    code,
+  };
+}
+
 @Injectable()
 export class AiUsageRecorderService {
   private readonly logger = new Logger(AiUsageRecorderService.name);
 
   record(capability: AiCapability, usage: AiUsageMetadata): void {
     this.logger.log(createSafeAiUsageRecord(capability, usage));
+  }
+
+  recordFailure(capability: AiCapability, code: string): void {
+    this.logger.warn(createSafeAiFailureRecord(capability, code));
   }
 }

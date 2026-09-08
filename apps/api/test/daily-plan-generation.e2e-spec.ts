@@ -2,7 +2,6 @@ import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   AI_OUTPUT_SCHEMA_VERSIONS,
-  AiSchemaValidationError,
   type DailyPlanOutput,
 } from '@your-shadow/contracts';
 import { randomUUID } from 'node:crypto';
@@ -14,11 +13,15 @@ import {
   AiCapability,
   type AiUsageMetadata,
 } from '../src/ai/ai-provider.contract';
-import { AiProviderErrorCode } from '../src/ai/ai-provider.error';
+import {
+  AiProviderError,
+  AiProviderErrorCode,
+} from '../src/ai/ai-provider.error';
 import { SafetyCode } from '../src/ai/safety/safety.types';
 import { FakeAiProvider } from '../src/ai/testing/fake-ai.provider';
 import {
   AiUsageRecorderService,
+  createSafeAiFailureRecord,
   createSafeAiUsageRecord,
 } from '../src/ai/usage/ai-usage-recorder.service';
 import { DailyPlan } from '../src/plans/entities/daily-plan.entity';
@@ -26,8 +29,12 @@ import {
   PlanItemSource,
   PlanItemStatus,
 } from '../src/plans/entities/plan-item.entity';
+import { DAILY_PLAN_FALLBACK_USER_MESSAGE } from '../src/plans/fallback/daily-plan-fallback.builder';
 import { DailyPlanGenerationService } from '../src/plans/services/daily-plan-generation.service';
-import type { DailyPlanGenerationInput } from '../src/plans/types/daily-plan-generation.types';
+import {
+  DailyPlanGenerationMode,
+  type DailyPlanGenerationInput,
+} from '../src/plans/types/daily-plan-generation.types';
 import { Profile } from '../src/profiles/entities/profile.entity';
 import { ProfileGoal } from '../src/profiles/enums/profile-goal.enum';
 import { ProfilesService } from '../src/profiles/services/profiles.service';
@@ -38,8 +45,14 @@ interface RecordedUsage {
   readonly usage: AiUsageMetadata;
 }
 
+interface RecordedFailure {
+  readonly capability: AiCapability;
+  readonly code: string;
+}
+
 class TestAiUsageRecorder {
   readonly records: RecordedUsage[] = [];
+  readonly failures: RecordedFailure[] = [];
 
   record(capability: AiCapability, usage: AiUsageMetadata): void {
     this.records.push({
@@ -48,8 +61,16 @@ class TestAiUsageRecorder {
     });
   }
 
+  recordFailure(capability: AiCapability, code: string): void {
+    this.failures.push({
+      capability,
+      code,
+    });
+  }
+
   reset(): void {
     this.records.length = 0;
+    this.failures.length = 0;
   }
 }
 
@@ -183,7 +204,7 @@ describe('DailyPlanGenerationService (e2e)', () => {
 
     fakeAiProvider.enqueueResult(createValidAiOutput(privateOutput));
 
-    const plan = await generationService.generateForUser(
+    const result = await generationService.generateForUser(
       user.id,
       createGenerationInput({
         latestSummary: {
@@ -192,6 +213,14 @@ describe('DailyPlanGenerationService (e2e)', () => {
         },
       }),
     );
+
+    const { plan } = result;
+
+    expect(result).toMatchObject({
+      mode: DailyPlanGenerationMode.Ai,
+      userMessage: null,
+      fallbackReason: null,
+    });
 
     expect(plan.localDate).toBe('2026-09-08');
     expect(plan.schemaVersion).toBe(AI_OUTPUT_SCHEMA_VERSIONS.dailyPlan);
@@ -218,6 +247,8 @@ describe('DailyPlanGenerationService (e2e)', () => {
         },
       },
     ]);
+
+    expect(usageRecorder.failures).toHaveLength(0);
 
     const safeUsageRecord = createSafeAiUsageRecord(AiCapability.DailyPlan, {
       provider: 'fake',
@@ -250,8 +281,12 @@ describe('DailyPlanGenerationService (e2e)', () => {
     expect(serializedUsage).not.toContain(user.id);
   });
 
-  it('rejects an unknown item type without persisting a plan', async () => {
+  it('uses fallback for an unknown AI item without persisting that output', async () => {
     const user = await createReadyUser('UnknownType');
+    const originalSummary = {
+      text: 'Keep this context unchanged',
+      date: '2026-09-07',
+    };
 
     fakeAiProvider.enqueueResult({
       schemaVersion: AI_OUTPUT_SCHEMA_VERSIONS.dailyPlan,
@@ -259,8 +294,8 @@ describe('DailyPlanGenerationService (e2e)', () => {
         createAiItem('nutrition'),
         {
           type: 'sleep',
-          title: 'AI sleep',
-          description: 'Unsupported item',
+          title: 'Unsupported AI sleep item',
+          description: 'This item must never be persisted',
           source: 'ai',
           explanation: null,
         },
@@ -268,18 +303,48 @@ describe('DailyPlanGenerationService (e2e)', () => {
       ],
     });
 
-    await expect(
-      generationService.generateForUser(user.id, createGenerationInput()),
-    ).rejects.toBeInstanceOf(AiSchemaValidationError);
+    const input = createGenerationInput({
+      latestSummary: originalSummary,
+    });
+
+    const result = await generationService.generateForUser(user.id, input);
+
+    expect(result).toMatchObject({
+      mode: DailyPlanGenerationMode.Fallback,
+      userMessage: DAILY_PLAN_FALLBACK_USER_MESSAGE,
+      fallbackReason: AiProviderErrorCode.InvalidResponse,
+    });
+
+    expect(result.plan.items).toHaveLength(3);
+    expect(
+      result.plan.items.every(
+        (item) => item.source === PlanItemSource.Fallback,
+      ),
+    ).toBe(true);
+
+    expect(
+      result.plan.items.some(
+        (item) => item.payload.title === 'Unsupported AI sleep item',
+      ),
+    ).toBe(false);
+
+    expect(input.latestSummary).toEqual(originalSummary);
+    expect(usageRecorder.records).toHaveLength(1);
+    expect(usageRecorder.failures).toEqual([
+      {
+        capability: AiCapability.DailyPlan,
+        code: AiProviderErrorCode.InvalidResponse,
+      },
+    ]);
 
     expect(
       await dailyPlansRepository.countBy({
         userId: user.id,
       }),
-    ).toBe(0);
+    ).toBe(1);
   });
 
-  it('rejects duplicate item types without persisting a plan', async () => {
+  it('uses fallback when domain validation finds duplicate item types', async () => {
     const user = await createReadyUser('DuplicateType');
 
     const duplicateOutput: DailyPlanOutput = {
@@ -293,32 +358,138 @@ describe('DailyPlanGenerationService (e2e)', () => {
 
     fakeAiProvider.enqueueResult(duplicateOutput);
 
-    await expect(
-      generationService.generateForUser(user.id, createGenerationInput()),
-    ).rejects.toMatchObject({
-      code: AiProviderErrorCode.InvalidResponse,
-      retryable: false,
+    const result = await generationService.generateForUser(
+      user.id,
+      createGenerationInput(),
+    );
+
+    expect(result).toMatchObject({
+      mode: DailyPlanGenerationMode.Fallback,
+      userMessage: DAILY_PLAN_FALLBACK_USER_MESSAGE,
+      fallbackReason: AiProviderErrorCode.InvalidResponse,
     });
 
+    expect(result.plan.items).toHaveLength(3);
     expect(
-      await dailyPlansRepository.countBy({
-        userId: user.id,
-      }),
-    ).toBe(0);
+      result.plan.items.every(
+        (item) => item.source === PlanItemSource.Fallback,
+      ),
+    ).toBe(true);
+
+    expect(result.plan.items.map((item) => item.type)).toEqual([
+      'nutrition',
+      'workout',
+      'check_in',
+    ]);
+  });
+
+  it('uses fallback after a provider timeout and logs no raw error data', async () => {
+    const user = await createReadyUser('Timeout');
+    const privateErrorText = 'private-provider-request-content';
+
+    fakeAiProvider.enqueueError(
+      new AiProviderError(AiProviderErrorCode.Timeout, privateErrorText, true),
+    );
+
+    const result = await generationService.generateForUser(
+      user.id,
+      createGenerationInput(),
+    );
+
+    expect(result).toMatchObject({
+      mode: DailyPlanGenerationMode.Fallback,
+      userMessage: DAILY_PLAN_FALLBACK_USER_MESSAGE,
+      fallbackReason: AiProviderErrorCode.Timeout,
+    });
+
+    expect(result.plan.items).toHaveLength(3);
+    expect(
+      result.plan.items.every(
+        (item) => item.source === PlanItemSource.Fallback,
+      ),
+    ).toBe(true);
+
+    expect(usageRecorder.records).toHaveLength(0);
+    expect(usageRecorder.failures).toEqual([
+      {
+        capability: AiCapability.DailyPlan,
+        code: AiProviderErrorCode.Timeout,
+      },
+    ]);
+
+    const safeFailureRecord = createSafeAiFailureRecord(
+      AiCapability.DailyPlan,
+      AiProviderErrorCode.Timeout,
+    );
+
+    expect(Object.keys(safeFailureRecord).sort()).toEqual(
+      ['event', 'capability', 'code'].sort(),
+    );
+
+    const serializedFailure = JSON.stringify(safeFailureRecord);
+
+    expect(serializedFailure).not.toContain(privateErrorText);
+    expect(serializedFailure).not.toContain(user.id);
+  });
+
+  it('uses fallback when the AI provider is disabled', async () => {
+    const user = await createReadyUser('Disabled');
+
+    fakeAiProvider.enqueueError(
+      new AiProviderError(
+        AiProviderErrorCode.Disabled,
+        'AI provider is disabled',
+        false,
+      ),
+    );
+
+    const result = await generationService.generateForUser(
+      user.id,
+      createGenerationInput(),
+    );
+
+    expect(result).toMatchObject({
+      mode: DailyPlanGenerationMode.Fallback,
+      userMessage: DAILY_PLAN_FALLBACK_USER_MESSAGE,
+      fallbackReason: AiProviderErrorCode.Disabled,
+    });
+
+    expect(result.plan.items).toHaveLength(3);
+    expect(
+      result.plan.items.every(
+        (item) => item.source === PlanItemSource.Fallback,
+      ),
+    ).toBe(true);
+
+    expect(usageRecorder.failures).toEqual([
+      {
+        capability: AiCapability.DailyPlan,
+        code: AiProviderErrorCode.Disabled,
+      },
+    ]);
   });
 
   it('preserves a blocking safety decision without calling AI', async () => {
     const user = await createReadyUser('SafetyBlock');
 
-    const plan = await generationService.generateForUser(
+    const result = await generationService.generateForUser(
       user.id,
       createGenerationInput({
         reportedSafetyCodes: [SafetyCode.ChestPain],
       }),
     );
 
+    const { plan } = result;
+
+    expect(result).toMatchObject({
+      mode: DailyPlanGenerationMode.Rules,
+      userMessage: null,
+      fallbackReason: null,
+    });
+
     expect(fakeAiProvider.structuredRequests).toHaveLength(0);
     expect(usageRecorder.records).toHaveLength(0);
+    expect(usageRecorder.failures).toHaveLength(0);
 
     const workoutItem = plan.items.find((item) => item.type === 'workout');
 
@@ -344,7 +515,7 @@ describe('DailyPlanGenerationService (e2e)', () => {
       ],
     } satisfies DailyPlanOutput);
 
-    const plan = await generationService.generateForUser(
+    const result = await generationService.generateForUser(
       user.id,
       createGenerationInput({
         constraints: [
@@ -357,6 +528,10 @@ describe('DailyPlanGenerationService (e2e)', () => {
         ],
       }),
     );
+
+    const { plan } = result;
+
+    expect(result.mode).toBe(DailyPlanGenerationMode.Ai);
 
     const nutritionItem = plan.items.find((item) => item.type === 'nutrition');
 
@@ -385,11 +560,13 @@ describe('DailyPlanGenerationService (e2e)', () => {
       fakeAiProvider.enqueueResult(createValidAiOutput());
     }
 
-    const plans = await Promise.all(
+    const results = await Promise.all(
       Array.from({ length: requestCount }, () =>
         generationService.generateForUser(user.id, createGenerationInput()),
       ),
     );
+
+    const plans = results.map((result) => result.plan);
 
     expect(new Set(plans.map((plan) => plan.id)).size).toBe(1);
 
