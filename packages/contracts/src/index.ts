@@ -4,6 +4,7 @@ export * from "./ai/daily-plan-output.schema";
 export * from "./ai/meal-draft-output.schema";
 export * from "./ai/substitution-output.schema";
 export * from "./ai/daily-summary-output.schema";
+export * from "./plans/today-plan.contract";
 
 export const APP_NAME = "Your Shadow" as const;
 
@@ -77,8 +78,7 @@ export const HEALTH_CONSTRAINT_TYPES = [
   "other",
 ] as const;
 
-export type HealthConstraintType =
-    (typeof HEALTH_CONSTRAINT_TYPES)[number];
+export type HealthConstraintType = (typeof HEALTH_CONSTRAINT_TYPES)[number];
 
 export const HEALTH_CONSTRAINT_SEVERITIES = [
   "low",
@@ -87,7 +87,7 @@ export const HEALTH_CONSTRAINT_SEVERITIES = [
 ] as const;
 
 export type HealthConstraintSeverity =
-    (typeof HEALTH_CONSTRAINT_SEVERITIES)[number];
+  (typeof HEALTH_CONSTRAINT_SEVERITIES)[number];
 
 export type CreateHealthConstraintRequest = {
   type: HealthConstraintType;
@@ -104,13 +104,10 @@ export type ProfileResponse = CreateProfileRequest & {
 };
 
 export type UpdateProfileRequest = Partial<
-    Pick<
-        CreateProfileRequest,
-        | "heightCm"
-        | "timezone"
-        | "primaryGoal"
-        | "targetWeightKg"
-    >
+  Pick<
+    CreateProfileRequest,
+    "heightCm" | "timezone" | "primaryGoal" | "targetWeightKg"
+  >
 >;
 
 export type WeightEntryResponse = {
@@ -121,16 +118,14 @@ export type WeightEntryResponse = {
   updatedAt: string;
 };
 
-export type HealthConstraintResponse =
-    CreateHealthConstraintRequest & {
+export type HealthConstraintResponse = CreateHealthConstraintRequest & {
   id: string;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
 };
 
-export type UpdateHealthConstraintRequest = Partial<
-    CreateHealthConstraintRequest
-> & {
-  isActive?: boolean;
-};
+export type UpdateHealthConstraintRequest =
+  Partial<CreateHealthConstraintRequest> & {
+    isActive?: boolean;
+  };
