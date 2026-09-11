@@ -1,5 +1,6 @@
 "use client";
 
+import { useRef } from "react";
 import type {
   AllowedPlanItemStatusUpdate,
   GenerateTodayPlanResponse,
@@ -18,6 +19,9 @@ import { ApiRequestError } from "@/lib/api/auth-api";
 export const TODAY_PLAN_SWR_KEY = "/api/plans/today";
 
 export function useTodayPlan() {
+  const generationRequestRef =
+    useRef<Promise<GenerateTodayPlanResponse> | null>(null);
+
   const { data, error, isLoading, isValidating, mutate } = useSWR<
     GetTodayPlanResponse,
     ApiRequestError
@@ -25,14 +29,26 @@ export function useTodayPlan() {
     shouldRetryOnError: (requestError) => requestError.statusCode !== 401,
   });
 
-  async function generate(): Promise<GenerateTodayPlanResponse> {
-    const response = await generateTodayPlan();
+  function generate(): Promise<GenerateTodayPlanResponse> {
+    if (generationRequestRef.current !== null) {
+      return generationRequestRef.current;
+    }
 
-    await mutate(response, {
-      revalidate: false,
-    });
+    const generationRequest = generateTodayPlan()
+      .then(async (response) => {
+        await mutate(response, {
+          revalidate: true,
+        });
 
-    return response;
+        return response;
+      })
+      .finally(() => {
+        generationRequestRef.current = null;
+      });
+
+    generationRequestRef.current = generationRequest;
+
+    return generationRequest;
   }
 
   async function updateItemStatus(
