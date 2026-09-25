@@ -9,6 +9,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { envValidationSchema } from './config/env.validation';
 import { HealthController } from './health/health.controller';
+import { MealsModule } from './meals/meals.module';
 import { PlansModule } from './plans/plans.module';
 import { ProfilesModule } from './profiles/profiles.module';
 
@@ -32,6 +33,7 @@ import { ProfilesModule } from './profiles/profiles.module';
     AiModule,
     AuthModule,
     ProfilesModule,
+    MealsModule,
     PlansModule,
   ],
   controllers: [AppController, HealthController],
