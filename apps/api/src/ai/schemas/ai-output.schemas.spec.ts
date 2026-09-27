@@ -12,49 +12,40 @@ import {
   validateAiOutput,
 } from '@your-shadow/contracts';
 
+import {
+  AMBIGUOUS_PORTION_MEAL_FIXTURE,
+  EXPLICIT_PORTIONS_MEAL_FIXTURE,
+  MEAL_PARSING_FIXTURES,
+} from '../../meals/testing/meal-parsing.fixtures';
+
 const validDailyPlanOutput = {
   schemaVersion: 1,
   items: [
     {
       type: 'nutrition',
-      title: 'Запланировать завтрак',
-      description: 'Выбрать простой завтрак с источником белка.',
+      title: 'Plan breakfast',
+      description: 'Choose a simple breakfast with a protein source.',
       source: 'ai',
       explanation: null,
     },
   ],
 };
 
-const validMealDraftOutput = {
-  schemaVersion: 1,
-  foods: [
-    {
-      name: 'Овсяная каша',
-      quantity: 250,
-      unit: 'g',
-      caloriesKcal: 280,
-      proteinGrams: 9,
-      fatGrams: 6,
-      carbohydratesGrams: 48,
-      confidence: 0.9,
-      isEstimate: true,
-    },
-  ],
-};
+const validMealDraftOutput = EXPLICIT_PORTIONS_MEAL_FIXTURE.output;
 
 const validSubstitutionOutput = {
   schemaVersion: 1,
   originalExerciseId: 'exercise-squat',
   replacementExerciseId: 'exercise-chair-squat',
   reason: 'too_hard',
-  explanation: 'Этот вариант выполняется с дополнительной опорой.',
+  explanation: 'This variation provides additional support.',
 };
 
 const validDailySummaryOutput = {
   schemaVersion: 1,
-  message: 'Сегодня удалось выполнить основную часть плана.',
-  completedFacts: ['Завершена прогулка', 'Добавлен приём пищи'],
-  tomorrowFocus: 'Сохранить спокойный темп и выполнить один небольшой шаг.',
+  message: 'The main part of the daily plan was completed.',
+  completedFacts: ['Completed a walk', 'Logged a meal'],
+  tomorrowFocus: 'Maintain a steady pace and complete one small action.',
 };
 
 const validFixtures = [
@@ -130,6 +121,82 @@ describe('AI output schemas', () => {
     for (const fixture of validFixtures) {
       expect(fixture.schema.safeParse(fixture.value).success).toBe(true);
     }
+  });
+
+  it('accepts representative meal parsing fixtures', () => {
+    for (const fixture of MEAL_PARSING_FIXTURES) {
+      expect(mealDraftOutputSchema.safeParse(fixture.output).success).toBe(
+        true,
+      );
+    }
+  });
+
+  it('allows low-confidence meal drafts to request clarification', () => {
+    const result = mealDraftOutputSchema.safeParse(
+      AMBIGUOUS_PORTION_MEAL_FIXTURE.output,
+    );
+
+    expect(result.success).toBe(true);
+    expect(AMBIGUOUS_PORTION_MEAL_FIXTURE.output.confidence).toBeLessThan(0.5);
+    expect(AMBIGUOUS_PORTION_MEAL_FIXTURE.output.clarification.needed).toBe(
+      true,
+    );
+    expect(
+      AMBIGUOUS_PORTION_MEAL_FIXTURE.output.clarification.question,
+    ).not.toBeNull();
+  });
+
+  it('rejects a meal draft without totals', () => {
+    const result = mealDraftOutputSchema.safeParse({
+      schemaVersion: validMealDraftOutput.schemaVersion,
+      foods: validMealDraftOutput.foods,
+      confidence: validMealDraftOutput.confidence,
+      clarification: validMealDraftOutput.clarification,
+    });
+
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects invalid meal totals', () => {
+    const invalidTotals = [
+      {
+        ...validMealDraftOutput.totals,
+        caloriesKcal: -1,
+      },
+      {
+        ...validMealDraftOutput.totals,
+        proteinGrams: 501,
+      },
+      {
+        ...validMealDraftOutput.totals,
+        fatGrams: -0.1,
+      },
+      {
+        ...validMealDraftOutput.totals,
+        carbohydratesGrams: 501,
+      },
+    ];
+
+    for (const totals of invalidTotals) {
+      expect(
+        mealDraftOutputSchema.safeParse({
+          ...validMealDraftOutput,
+          totals,
+        }).success,
+      ).toBe(false);
+    }
+  });
+
+  it('rejects an empty clarification question', () => {
+    const result = mealDraftOutputSchema.safeParse({
+      ...AMBIGUOUS_PORTION_MEAL_FIXTURE.output,
+      clarification: {
+        needed: true,
+        question: ' ',
+      },
+    });
+
+    expect(result.success).toBe(false);
   });
 
   it('rejects an unsupported schema version', () => {
