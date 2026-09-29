@@ -4,6 +4,7 @@ export * from "./ai/daily-plan-output.schema";
 export * from "./ai/meal-draft-output.schema";
 export * from "./ai/substitution-output.schema";
 export * from "./ai/daily-summary-output.schema";
+export * from "./meals/meal-parsing.contract";
 export * from "./plans/today-plan.contract";
 
 export const APP_NAME = "Your Shadow" as const;
