@@ -76,6 +76,26 @@ describe('MealParsingService', () => {
     ).resolves.toEqual(AMBIGUOUS_PORTION_MEAL_FIXTURE.output);
   });
 
+  it('adds one question when a low-confidence draft omits clarification', async () => {
+    aiProvider.enqueueResult({
+      ...AMBIGUOUS_PORTION_MEAL_FIXTURE.output,
+      clarification: {
+        needed: false,
+        question: null,
+      },
+    });
+
+    await expect(
+      service.parse(AMBIGUOUS_PORTION_MEAL_FIXTURE.originalText),
+    ).resolves.toEqual({
+      ...AMBIGUOUS_PORTION_MEAL_FIXTURE.output,
+      clarification: {
+        needed: true,
+        question: 'About how much of the meal did you eat?',
+      },
+    });
+  });
+
   it('rejects nutrition data that requires correction', async () => {
     const inconsistentOutput = {
       ...EXPLICIT_PORTIONS_MEAL_FIXTURE.output,
@@ -101,23 +121,29 @@ describe('MealParsingService', () => {
     );
   });
 
-  it('rethrows and safely records provider failures', async () => {
-    const providerError = new AiProviderError(
-      AiProviderErrorCode.RateLimited,
-      'AI provider rate limit reached',
-      true,
+  it.each([
+    AiProviderErrorCode.Disabled,
+    AiProviderErrorCode.Timeout,
+    AiProviderErrorCode.RateLimited,
+    AiProviderErrorCode.Unavailable,
+  ])('offers manual entry for provider failure %s', async (code) => {
+    aiProvider.enqueueError(
+      new AiProviderError(code, 'Private provider details', true),
     );
 
-    aiProvider.enqueueError(providerError);
+    await expect(service.parse('A private meal description')).resolves.toEqual({
+      status: 'manual_entry_required',
+      reason: 'ai_unavailable',
+      originalText: 'A private meal description',
+      nutrition: {
+        caloriesKcal: null,
+        proteinGrams: null,
+        fatGrams: null,
+        carbohydratesGrams: null,
+      },
+    });
 
-    await expect(service.parse('A private meal description')).rejects.toBe(
-      providerError,
-    );
-
-    expect(recordFailureSpy).toHaveBeenCalledWith(
-      AiCapability.MealDraft,
-      AiProviderErrorCode.RateLimited,
-    );
+    expect(recordFailureSpy).toHaveBeenCalledWith(AiCapability.MealDraft, code);
     expect(recordSpy).not.toHaveBeenCalled();
   });
 });

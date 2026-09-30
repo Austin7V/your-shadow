@@ -15,8 +15,15 @@ import { AI_PROVIDER } from '../src/ai/ai-provider.contract';
 import { FakeAiProvider } from '../src/ai/testing/fake-ai.provider';
 import { MealEntry } from '../src/meals/entities/meal-entry.entity';
 import { MEAL_PARSING_RATE_LIMIT } from '../src/meals/security/meal-parsing-rate-limit.service';
-import { EXPLICIT_PORTIONS_MEAL_FIXTURE } from '../src/meals/testing/meal-parsing.fixtures';
 import { User } from '../src/users/entities/user.entity';
+import {
+  AiProviderError,
+  AiProviderErrorCode,
+} from '../src/ai/ai-provider.error';
+import {
+  AMBIGUOUS_PORTION_MEAL_FIXTURE,
+  EXPLICIT_PORTIONS_MEAL_FIXTURE,
+} from '../src/meals/testing/meal-parsing.fixtures';
 
 describe('Meal parsing API (e2e)', () => {
   let app: INestApplication<App>;
@@ -149,6 +156,52 @@ describe('Meal parsing API (e2e)', () => {
 
     expect(entriesBeforeRequest).toBe(0);
     expect(entriesAfterRequest).toBe(0);
+  });
+
+  it('returns one clarification question without saving an ambiguous meal', async () => {
+    fakeAiProvider.enqueueResult(AMBIGUOUS_PORTION_MEAL_FIXTURE.output);
+
+    const response = await mealAgent
+      .post('/meals/parse')
+      .send({
+        originalText: AMBIGUOUS_PORTION_MEAL_FIXTURE.originalText,
+      })
+      .expect(200);
+
+    expect(response.body).toEqual(AMBIGUOUS_PORTION_MEAL_FIXTURE.output);
+    expect(response.body).toHaveProperty('clarification', {
+      needed: true,
+      question: AMBIGUOUS_PORTION_MEAL_FIXTURE.output.clarification.question,
+    });
+    expect(await mealEntriesRepository.countBy({ userId: mealUserId })).toBe(0);
+  });
+
+  it('offers manual entry without saving a meal when AI is unavailable', async () => {
+    fakeAiProvider.enqueueError(
+      new AiProviderError(
+        AiProviderErrorCode.Unavailable,
+        'Private provider details',
+        true,
+      ),
+    );
+
+    const response = await mealAgent
+      .post('/meals/parse')
+      .send({ originalText: 'A bowl of soup' })
+      .expect(200);
+
+    expect(response.body).toEqual({
+      status: 'manual_entry_required',
+      reason: 'ai_unavailable',
+      originalText: 'A bowl of soup',
+      nutrition: {
+        caloriesKcal: null,
+        proteinGrams: null,
+        fatGrams: null,
+        carbohydratesGrams: null,
+      },
+    });
+    expect(await mealEntriesRepository.countBy({ userId: mealUserId })).toBe(0);
   });
 
   it('enforces the per-user request rate limit', async () => {
