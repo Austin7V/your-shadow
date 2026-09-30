@@ -18,6 +18,7 @@ import {
 } from '../../ai/ai-provider.error';
 import { AiUsageRecorderService } from '../../ai/usage/ai-usage-recorder.service';
 import { buildMealParsingPrompt } from '../prompts/meal-parsing.prompt';
+import { MEAL_NUTRITION_VALIDATION_LIMITS } from '../validation/meal-nutrition-validation.constants';
 import {
   MealNutritionValidationAction,
   MealNutritionValidationCode,
@@ -50,9 +51,35 @@ export class MealParsingService {
         generationResult.usage,
       );
 
-      const validationResult = this.mealNutritionValidatorService.validate(
+      const parsedDraft = validateAiOutput(
+        mealDraftOutputSchema,
         generationResult.output,
       );
+
+      const hasLowConfidence =
+        parsedDraft.confidence <
+          MEAL_NUTRITION_VALIDATION_LIMITS.lowConfidenceThreshold ||
+        parsedDraft.foods.some(
+          (food) =>
+            food.confidence <
+            MEAL_NUTRITION_VALIDATION_LIMITS.lowConfidenceThreshold,
+        );
+
+      const draft =
+        hasLowConfidence &&
+        (!parsedDraft.clarification.needed ||
+          !parsedDraft.clarification.question)
+          ? {
+              ...parsedDraft,
+              clarification: {
+                needed: true,
+                question: 'About how much of the meal did you eat?',
+              },
+            }
+          : parsedDraft;
+
+      const validationResult =
+        this.mealNutritionValidatorService.validate(draft);
 
       if (validationResult.action === MealNutritionValidationAction.Correct) {
         const failureCode =
@@ -66,12 +93,32 @@ export class MealParsingService {
         );
       }
 
-      return validateAiOutput(mealDraftOutputSchema, generationResult.output);
+      return draft;
     } catch (error) {
       this.aiUsageRecorderService.recordFailure(
         AiCapability.MealDraft,
         this.resolveFailureCode(error),
       );
+
+      if (error instanceof AiProviderError) {
+        switch (error.code) {
+          case AiProviderErrorCode.Disabled:
+          case AiProviderErrorCode.Timeout:
+          case AiProviderErrorCode.RateLimited:
+          case AiProviderErrorCode.Unavailable:
+            return {
+              status: 'manual_entry_required',
+              reason: 'ai_unavailable',
+              originalText,
+              nutrition: {
+                caloriesKcal: null,
+                proteinGrams: null,
+                fatGrams: null,
+                carbohydratesGrams: null,
+              },
+            };
+        }
+      }
 
       throw error;
     }
