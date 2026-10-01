@@ -14,6 +14,8 @@ import { DataSource, Repository } from 'typeorm';
 import { AppModule } from '../src/app.module';
 import { ProfileGoal } from '../src/profiles/enums/profile-goal.enum';
 import { User } from '../src/users/entities/user.entity';
+import { AI_PROVIDER } from '../src/ai/ai-provider.contract';
+import { DisabledAiProvider } from '../src/ai/providers/disabled-ai.provider';
 
 describe('Today plan API (e2e)', () => {
   let app: INestApplication<App>;
@@ -32,7 +34,10 @@ describe('Today plan API (e2e)', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    }).compile();
+    })
+      .overrideProvider(AI_PROVIDER)
+      .useValue(new DisabledAiProvider())
+      .compile();
 
     app = moduleFixture.createNestApplication();
 

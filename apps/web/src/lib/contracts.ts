@@ -33,6 +33,11 @@ export type {
   TodayPlanResponse,
   UpdateTodayPlanItemStatusRequest,
   UpdateTodayPlanItemStatusResponse,
+  MealDraftOutput,
+  MealDraftFoodOutput,
+  MealNutritionTotals,
+  ParseMealRequest,
+  ParseMealResponse,
 } from "@your-shadow/contracts";
 
 export {
@@ -44,12 +49,9 @@ export {
   DAILY_PLAN_STATUSES,
   PLAN_ITEM_SOURCES,
   PLAN_ITEM_STATUSES,
+  MEAL_DESCRIPTION_LIMITS,
+  MEAL_QUANTITY_UNITS,
+  mealDraftFoodSchema,
+  mealNutritionTotalsSchema,
+  manualMealDraftSchema,
 } from "@your-shadow/contracts";
-
-export type {
-  MealDraftOutput,
-  ParseMealRequest,
-  ParseMealResponse,
-} from "@your-shadow/contracts";
-
-export { MEAL_DESCRIPTION_LIMITS } from "@your-shadow/contracts";
