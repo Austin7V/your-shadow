@@ -9,6 +9,10 @@ import {
   type ParseMealResponse,
 } from "@/lib/contracts";
 
+import {
+  MealDraftEditor,
+  type ReviewedMealDraft,
+} from "./components/meal-draft-editor";
 import { FeaturePageShell } from "../../components/feature-page-shell";
 import { Button } from "../../components/ui/button";
 import { Card } from "../../components/ui/card";
@@ -29,6 +33,11 @@ const EXAMPLES = [
   "A bowl of rice with tofu and vegetables",
 ];
 
+type ReviewState =
+  | { status: "confirmed"; draft: ReviewedMealDraft }
+  | { status: "cancelled" }
+  | null;
+
 export default function MealsPage() {
   const [mealType, setMealType] = useState("");
   const [originalText, setOriginalText] = useState("");
@@ -36,6 +45,7 @@ export default function MealsPage() {
   const [textError, setTextError] = useState("");
   const [requestError, setRequestError] = useState("");
   const [result, setResult] = useState<ParseMealResponse | null>(null);
+  const [reviewState, setReviewState] = useState<ReviewState>(null);
   const [isParsing, setIsParsing] = useState(false);
   const inFlight = useRef(false);
 
@@ -44,6 +54,7 @@ export default function MealsPage() {
     setTextError("");
     setRequestError("");
     setResult(null);
+    setReviewState(null);
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -69,6 +80,7 @@ export default function MealsPage() {
     setIsParsing(true);
     setRequestError("");
     setResult(null);
+    setReviewState(null);
 
     try {
       const response = await parseMeal({ originalText: description });
@@ -101,6 +113,7 @@ export default function MealsPage() {
                 setTypeError("");
                 setRequestError("");
                 setResult(null);
+                setReviewState(null);
               }}
             />
 
@@ -162,31 +175,49 @@ export default function MealsPage() {
         />
       ) : null}
 
-      {result && "status" in result ? (
-        <FeedbackState
-          icon={CircleHelp}
-          tone="warning"
-          title="Unable to estimate this meal"
-          description="The parsing service is unavailable. Your description remains in the form. Nothing has been saved."
-        />
-      ) : result && "foods" in result ? (
+      {result ? (
         <div className="space-y-4">
-          {result.clarification.needed ? (
+          {"status" in result ? (
             <FeedbackState
               icon={CircleHelp}
               tone="warning"
-              title="One more detail"
-              description={`${result.clarification.question ?? "Please add the amount."} Update your description and parse again.`}
+              title="Unable to estimate this meal"
+              description="The parsing service is unavailable. You can enter the nutrition values manually. Nothing has been saved."
             />
           ) : null}
 
-          <FeedbackState
-            icon={Sparkles}
-            tone="success"
-            title="Meal draft ready"
-            description={`Estimated total: ${result.totals.caloriesKcal} kcal. Nutrition values are estimates; this meal has not been saved.`}
+          <MealDraftEditor
+            result={result}
+            mealType={mealType}
+            originalText={originalText.trim()}
+            onCancel={() => {
+              setResult(null);
+              setReviewState({ status: "cancelled" });
+            }}
+            onConfirm={(draft) => {
+              setResult(null);
+              setReviewState({ status: "confirmed", draft });
+            }}
           />
         </div>
+      ) : null}
+
+      {reviewState?.status === "confirmed" ? (
+        <FeedbackState
+          icon={Sparkles}
+          tone="success"
+          title="Values confirmed"
+          description={`Reviewed total: ${reviewState.draft.totals.caloriesKcal} kcal. This meal has not been saved yet.`}
+        />
+      ) : null}
+
+      {reviewState?.status === "cancelled" ? (
+        <FeedbackState
+          icon={CircleHelp}
+          tone="warning"
+          title="Review cancelled"
+          description="The draft was discarded. Nothing has been saved."
+        />
       ) : null}
     </FeaturePageShell>
   );
