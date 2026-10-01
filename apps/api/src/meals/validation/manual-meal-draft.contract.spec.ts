@@ -17,6 +17,7 @@ describe('manualMealDraftSchema', () => {
 
   it.each([
     ['blank description', { ...validDraft, originalText: '   ' }],
+    ['one-character description', { ...validDraft, originalText: 'a' }],
     [
       'missing calories',
       {
