@@ -45,3 +45,11 @@ export {
   PLAN_ITEM_SOURCES,
   PLAN_ITEM_STATUSES,
 } from "@your-shadow/contracts";
+
+export type {
+  MealDraftOutput,
+  ParseMealRequest,
+  ParseMealResponse,
+} from "@your-shadow/contracts";
+
+export { MEAL_DESCRIPTION_LIMITS } from "@your-shadow/contracts";
