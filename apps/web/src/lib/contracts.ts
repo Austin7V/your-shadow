@@ -38,6 +38,9 @@ export type {
   MealNutritionTotals,
   ParseMealRequest,
   ParseMealResponse,
+  ConfirmMealRequest,
+  ConfirmMealResponse,
+  MealType,
 } from "@your-shadow/contracts";
 
 export {
@@ -54,4 +57,5 @@ export {
   mealDraftFoodSchema,
   mealNutritionTotalsSchema,
   manualMealDraftSchema,
+  MEAL_TYPES,
 } from "@your-shadow/contracts";

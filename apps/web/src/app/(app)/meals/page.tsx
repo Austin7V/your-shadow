@@ -3,9 +3,17 @@
 import { AlertCircle, CircleHelp, Sparkles } from "lucide-react";
 import { useRef, useState, type FormEvent } from "react";
 
-import { getMealParsingErrorMessage, parseMeal } from "@/lib/api/meal-api";
+import {
+  confirmMeal,
+  getMealConfirmationErrorMessage,
+  getMealParsingErrorMessage,
+  parseMeal,
+} from "@/lib/api/meal-api";
 import {
   MEAL_DESCRIPTION_LIMITS,
+  type ConfirmMealRequest,
+  type ConfirmMealResponse,
+  type MealType,
   type ParseMealResponse,
 } from "@/lib/contracts";
 
@@ -20,7 +28,7 @@ import { FeedbackState } from "../../components/ui/feedback-state";
 import { Select } from "../../components/ui/select";
 import { Textarea } from "../../components/ui/textarea";
 
-const MEAL_TYPES = [
+const MEAL_TYPES: { value: MealType; label: string }[] = [
   { value: "breakfast", label: "Breakfast" },
   { value: "lunch", label: "Lunch" },
   { value: "dinner", label: "Dinner" },
@@ -34,7 +42,11 @@ const EXAMPLES = [
 ];
 
 type ReviewState =
-  | { status: "confirmed"; draft: ReviewedMealDraft }
+  | {
+      status: "confirmed";
+      confirmation: ConfirmMealResponse;
+      caloriesKcal: number;
+    }
   | { status: "cancelled" }
   | null;
 
@@ -44,15 +56,25 @@ export default function MealsPage() {
   const [typeError, setTypeError] = useState("");
   const [textError, setTextError] = useState("");
   const [requestError, setRequestError] = useState("");
+  const [saveError, setSaveError] = useState("");
   const [result, setResult] = useState<ParseMealResponse | null>(null);
   const [reviewState, setReviewState] = useState<ReviewState>(null);
   const [isParsing, setIsParsing] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const inFlight = useRef(false);
+  const confirmationAttempt = useRef<{
+    payload: string;
+    id: string;
+  } | null>(null);
+
+  const isBusy = isParsing || isSaving;
 
   function updateText(value: string) {
+    confirmationAttempt.current = null;
     setOriginalText(value);
     setTextError("");
     setRequestError("");
+    setSaveError("");
     setResult(null);
     setReviewState(null);
   }
@@ -76,9 +98,11 @@ export default function MealsPage() {
 
     if (nextTypeError || nextTextError) return;
 
+    confirmationAttempt.current = null;
     inFlight.current = true;
     setIsParsing(true);
     setRequestError("");
+    setSaveError("");
     setResult(null);
     setReviewState(null);
 
@@ -90,6 +114,67 @@ export default function MealsPage() {
     } finally {
       inFlight.current = false;
       setIsParsing(false);
+    }
+  }
+
+  async function handleConfirm(draft: ReviewedMealDraft) {
+    if (inFlight.current) return;
+
+    const selectedMealType = MEAL_TYPES.find(
+      (option) => option.value === draft.mealType,
+    )?.value;
+
+    if (!selectedMealType) {
+      setSaveError("Choose a meal type.");
+      return;
+    }
+
+    const common = {
+      mealType: selectedMealType,
+      originalText: draft.originalText,
+    };
+
+    const request: ConfirmMealRequest =
+      draft.source === "ai"
+        ? {
+            ...common,
+            source: "ai",
+            foods: draft.foods,
+            totals: draft.totals,
+          }
+        : {
+            ...common,
+            source: "manual",
+            nutrition: draft.totals,
+          };
+
+    const payload = JSON.stringify(request);
+    let attempt = confirmationAttempt.current;
+
+    if (!attempt || attempt.payload !== payload) {
+      attempt = { payload, id: crypto.randomUUID() };
+      confirmationAttempt.current = attempt;
+    }
+
+    inFlight.current = true;
+    setIsSaving(true);
+    setSaveError("");
+
+    try {
+      const confirmation = await confirmMeal(request, attempt.id);
+      confirmationAttempt.current = null;
+
+      setResult(null);
+      setReviewState({
+        status: "confirmed",
+        confirmation,
+        caloriesKcal: draft.totals.caloriesKcal,
+      });
+    } catch (error) {
+      setSaveError(getMealConfirmationErrorMessage(error));
+    } finally {
+      inFlight.current = false;
+      setIsSaving(false);
     }
   }
 
@@ -107,11 +192,13 @@ export default function MealsPage() {
               options={MEAL_TYPES}
               value={mealType}
               error={typeError}
-              disabled={isParsing}
+              disabled={isBusy}
               onChange={(event) => {
+                confirmationAttempt.current = null;
                 setMealType(event.target.value);
                 setTypeError("");
                 setRequestError("");
+                setSaveError("");
                 setResult(null);
                 setReviewState(null);
               }}
@@ -124,7 +211,7 @@ export default function MealsPage() {
                 value={originalText}
                 maxLength={MEAL_DESCRIPTION_LIMITS.maximumLength}
                 error={textError}
-                disabled={isParsing}
+                disabled={isBusy}
                 onChange={(event) => updateText(event.target.value)}
               />
               <p className="mt-1 text-right text-xs text-muted-foreground">
@@ -136,6 +223,7 @@ export default function MealsPage() {
               type="submit"
               loading={isParsing}
               loadingLabel="Parsing meal..."
+              disabled={isSaving}
               className="w-full sm:w-auto"
             >
               <Sparkles aria-hidden="true" className="size-4" />
@@ -154,7 +242,7 @@ export default function MealsPage() {
               <button
                 key={example}
                 type="button"
-                disabled={isParsing}
+                disabled={isBusy}
                 onClick={() => updateText(example)}
                 className="min-h-11 rounded-control border border-border bg-surface px-3 py-2 text-left text-sm text-foreground hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-ring disabled:opacity-50"
               >
@@ -186,17 +274,29 @@ export default function MealsPage() {
             />
           ) : null}
 
+          {saveError ? (
+            <FeedbackState
+              icon={AlertCircle}
+              tone="error"
+              title="Could not confirm meal"
+              description={saveError}
+              role="alert"
+            />
+          ) : null}
+
           <MealDraftEditor
             result={result}
             mealType={mealType}
             originalText={originalText.trim()}
+            isSaving={isSaving}
             onCancel={() => {
+              confirmationAttempt.current = null;
               setResult(null);
+              setSaveError("");
               setReviewState({ status: "cancelled" });
             }}
             onConfirm={(draft) => {
-              setResult(null);
-              setReviewState({ status: "confirmed", draft });
+              void handleConfirm(draft);
             }}
           />
         </div>
@@ -206,8 +306,8 @@ export default function MealsPage() {
         <FeedbackState
           icon={Sparkles}
           tone="success"
-          title="Values confirmed"
-          description={`Reviewed total: ${reviewState.draft.totals.caloriesKcal} kcal. This meal has not been saved yet.`}
+          title="Meal saved"
+          description={`Saved for ${reviewState.confirmation.localDate}. Reviewed total: ${reviewState.caloriesKcal} kcal.`}
         />
       ) : null}
 
