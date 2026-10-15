@@ -13,6 +13,7 @@ import { MealConfirmationService } from './services/meal-confirmation.service';
 import { MealParsingService } from './services/meal-parsing.service';
 import { MealNutritionValidatorService } from './validation/meal-nutrition-validator.service';
 import { MealManagementService } from './services/meal-management.service';
+import { DailyNutritionTotalsService } from './services/daily-nutrition-totals.service';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { MealManagementService } from './services/meal-management.service';
     MealParsingService,
     MealConfirmationService,
     MealManagementService,
+    DailyNutritionTotalsService,
   ],
   exports: [MealNutritionValidatorService, MealParsingService],
 })
