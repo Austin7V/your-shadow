@@ -137,7 +137,7 @@ export class MealConfirmationService {
     };
   }
 
-  private validateAiFoods(
+  validateAiFoods(
     request: Extract<ConfirmMealRequest, { source: 'ai' }>,
   ): void {
     const result = this.mealNutritionValidatorService.validate({
