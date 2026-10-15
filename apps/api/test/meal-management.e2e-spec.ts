@@ -4,6 +4,7 @@ import {
   type ConfirmMealRequest,
   type ListMealsResponse,
   type MealEntryResponse,
+  type DailyNutritionTotalsResponse,
 } from '@your-shadow/contracts';
 import cookieParser from 'cookie-parser';
 import { randomUUID } from 'node:crypto';
@@ -277,5 +278,155 @@ describe('Meal management API (e2e)', () => {
 
     // Repeating DELETE cannot remove any additional record.
     await ownerAgent.delete(`/meals/${entry.id}`).expect(404);
+  });
+  it('returns zero totals for an empty day and validates the date', async () => {
+    await request(app.getHttpServer())
+      .get('/meals/totals?date=2026-11-01')
+      .expect(401);
+
+    const response = await ownerAgent
+      .get('/meals/totals?date=2026-11-01')
+      .expect(200);
+
+    expect(response.body as DailyNutritionTotalsResponse).toEqual({
+      localDate: '2026-11-01',
+      mealCount: 0,
+      caloriesKcal: 0,
+      proteinGrams: 0,
+      fatGrams: 0,
+      carbohydratesGrams: 0,
+    });
+
+    await ownerAgent.get('/meals/totals').expect(400);
+    await ownerAgent.get('/meals/totals?date=2026-02-30').expect(400);
+  });
+
+  it('sums only owned confirmed meals for the stored local date', async () => {
+    const date = '2026-11-02';
+
+    await createMeal(ownerId, date, {
+      ...originalMeal,
+      nutrition: {
+        caloriesKcal: 420,
+        proteinGrams: 12.26,
+        fatGrams: 8.11,
+        carbohydratesGrams: 70.25,
+      },
+    });
+
+    const aiMealId = randomUUID();
+    const aiMeal = {
+      source: 'ai' as const,
+      mealType: 'snack' as const,
+      originalText: 'Yogurt',
+      foods: [
+        {
+          name: 'Yogurt',
+          quantity: 1,
+          unit: 'portion' as const,
+          caloriesKcal: 250,
+          proteinGrams: 10.14,
+          fatGrams: 6.16,
+          carbohydratesGrams: 30.16,
+          confidence: 1,
+          isEstimate: true as const,
+        },
+      ],
+      totals: {
+        caloriesKcal: 250,
+        proteinGrams: 10.14,
+        fatGrams: 6.16,
+        carbohydratesGrams: 30.16,
+      },
+    };
+
+    await mealsRepository.save(
+      mealsRepository.create({
+        id: aiMealId,
+        userId: ownerId,
+        encryptedData: encryptionService.encrypt(
+          { schemaVersion: 1, ...aiMeal },
+          createMealEntryEncryptionContext(ownerId, aiMealId),
+        ),
+        localDate: date,
+        status: MealEntryStatus.Confirmed,
+        source: MealEntrySource.Ai,
+        schemaVersion: 1,
+        confirmedAt: new Date(),
+      }),
+    );
+
+    await createMeal(ownerId, null);
+    await createMeal(ownerId, '2026-11-04');
+    await createMeal(otherId, date);
+
+    const response = await ownerAgent
+      .get(`/meals/totals?date=${date}`)
+      .expect(200);
+
+    expect(response.body as DailyNutritionTotalsResponse).toEqual({
+      localDate: date,
+      mealCount: 2,
+      caloriesKcal: 670,
+      proteinGrams: 22.4,
+      fatGrams: 14.3,
+      carbohydratesGrams: 100.4,
+    });
+
+    const otherResponse = await otherAgent
+      .get(`/meals/totals?date=${date}`)
+      .expect(200);
+
+    expect(otherResponse.body as DailyNutritionTotalsResponse).toMatchObject({
+      localDate: date,
+      mealCount: 1,
+      caloriesKcal: 420,
+    });
+  });
+
+  it('recalculates totals after editing and deleting meals', async () => {
+    const date = '2026-11-03';
+    const first = await createMeal(ownerId, date);
+    const second = await createMeal(ownerId, date);
+
+    const before = await ownerAgent
+      .get(`/meals/totals?date=${date}`)
+      .expect(200);
+
+    expect(before.body as DailyNutritionTotalsResponse).toMatchObject({
+      mealCount: 2,
+      caloriesKcal: 840,
+    });
+
+    await ownerAgent
+      .patch(`/meals/${first.id}`)
+      .send({
+        ...originalMeal,
+        nutrition: {
+          ...originalMeal.nutrition,
+          caloriesKcal: 300,
+        },
+      })
+      .expect(200);
+
+    const afterEdit = await ownerAgent
+      .get(`/meals/totals?date=${date}`)
+      .expect(200);
+
+    expect(afterEdit.body as DailyNutritionTotalsResponse).toMatchObject({
+      mealCount: 2,
+      caloriesKcal: 720,
+    });
+
+    await ownerAgent.delete(`/meals/${second.id}`).expect(204);
+
+    const afterDelete = await ownerAgent
+      .get(`/meals/totals?date=${date}`)
+      .expect(200);
+
+    expect(afterDelete.body as DailyNutritionTotalsResponse).toMatchObject({
+      mealCount: 1,
+      caloriesKcal: 300,
+    });
   });
 });

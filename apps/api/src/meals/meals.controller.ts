@@ -19,8 +19,10 @@ import type {
   ListMealsResponse,
   MealEntryResponse,
   ParseMealResponse,
+  DailyNutritionTotalsResponse,
 } from '@your-shadow/contracts';
 import type { Request } from 'express';
+import { DailyNutritionTotalsService } from './services/daily-nutrition-totals.service';
 
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ListMealsQueryDto } from './dto/list-meals-query.dto';
@@ -44,6 +46,7 @@ export class MealsController {
     private readonly mealParsingRateLimitService: MealParsingRateLimitService,
     private readonly mealConfirmationService: MealConfirmationService,
     private readonly mealManagementService: MealManagementService,
+    private readonly dailyNutritionTotalsService: DailyNutritionTotalsService,
   ) {}
 
   @Post('parse')
@@ -76,6 +79,17 @@ export class MealsController {
     @Query() query: ListMealsQueryDto,
   ): Promise<ListMealsResponse> {
     return this.mealManagementService.list(request.auth.userId, query.date);
+  }
+
+  @Get('totals')
+  getDailyTotals(
+    @Req() request: AuthenticatedRequest,
+    @Query() query: ListMealsQueryDto,
+  ): Promise<DailyNutritionTotalsResponse> {
+    return this.dailyNutritionTotalsService.get(
+      request.auth.userId,
+      query.date,
+    );
   }
 
   @Get(':id')
