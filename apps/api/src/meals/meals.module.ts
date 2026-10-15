@@ -12,6 +12,7 @@ import { MealParsingRateLimitService } from './security/meal-parsing-rate-limit.
 import { MealConfirmationService } from './services/meal-confirmation.service';
 import { MealParsingService } from './services/meal-parsing.service';
 import { MealNutritionValidatorService } from './validation/meal-nutrition-validator.service';
+import { MealManagementService } from './services/meal-management.service';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { MealNutritionValidatorService } from './validation/meal-nutrition-valid
     MealParsingRateLimitService,
     MealParsingService,
     MealConfirmationService,
+    MealManagementService,
   ],
   exports: [MealNutritionValidatorService, MealParsingService],
 })
