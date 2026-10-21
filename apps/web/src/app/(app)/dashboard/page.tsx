@@ -1,10 +1,19 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
+import useSWR from "swr";
 
+import {
+  getDailyNutritionTotals,
+  getMealManagementErrorMessage,
+} from "@/lib/api/meal-management-api";
 import { getTodayPlanErrorMessage } from "@/lib/api/today-plan-api";
-import type { AllowedPlanItemStatusUpdate } from "@/lib/contracts";
 import { useTodayPlan } from "@/hooks/use-today-plan";
+import type {
+  AllowedPlanItemStatusUpdate,
+  DailyNutritionTotalsResponse,
+} from "@/lib/contracts";
 
 import { Button } from "../../components/ui/button";
 import { PlanItemCard } from "./_components/plan-item-card";
@@ -19,6 +28,78 @@ function formatLocalDate(localDate: string): string {
     year: "numeric",
     timeZone: "UTC",
   }).format(date);
+}
+
+function NutritionStatusCard({ localDate }: { localDate: string }) {
+  const { data, error, isLoading, mutate } = useSWR<
+    DailyNutritionTotalsResponse,
+    Error
+  >(["meal-totals", localDate], () => getDailyNutritionTotals(localDate));
+
+  return (
+    <section
+      className="rounded-2xl border border-border bg-surface p-5 shadow-sm"
+      aria-labelledby="nutrition-status-heading"
+      aria-busy={isLoading}
+    >
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h2
+            id="nutrition-status-heading"
+            className="text-lg font-semibold text-foreground"
+          >
+            Nutrition today
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Logged intake · nutrition values are estimates
+          </p>
+        </div>
+
+        <Link
+          href="/meals"
+          className="inline-flex min-h-11 items-center rounded-control border border-border px-4 text-sm font-medium text-foreground hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-ring"
+        >
+          Open meals
+        </Link>
+      </div>
+
+      {isLoading ? (
+        <p className="mt-4 text-sm text-muted-foreground" role="status">
+          Loading nutrition...
+        </p>
+      ) : error ? (
+        <div className="mt-4 space-y-3" role="alert">
+          <p className="text-sm text-error-content">
+            {getMealManagementErrorMessage(error)}
+          </p>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => void mutate()}
+          >
+            Try again
+          </Button>
+        </div>
+      ) : data ? (
+        <>
+          <p className="mt-4 text-sm text-muted-foreground">
+            {data.mealCount === 0
+              ? "No meals logged for today yet."
+              : `${data.mealCount} ${data.mealCount === 1 ? "meal" : "meals"} logged`}
+          </p>
+
+          <div className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
+            <span className="font-semibold text-foreground">
+              {data.caloriesKcal} kcal
+            </span>
+            <span>{data.proteinGrams} g protein</span>
+            <span>{data.fatGrams} g fat</span>
+            <span>{data.carbohydratesGrams} g carbohydrates</span>
+          </div>
+        </>
+      ) : null}
+    </section>
+  );
 }
 
 export default function DashboardPage() {
@@ -65,7 +146,7 @@ export default function DashboardPage() {
     }
   }
 
-  if (isLoading || data === undefined) {
+  if (isLoading || (data === undefined && error === undefined)) {
     return (
       <main className="mx-auto w-full max-w-6xl space-y-6" aria-busy="true">
         <div className="space-y-3">
@@ -117,6 +198,16 @@ export default function DashboardPage() {
     );
   }
 
+  if (data === undefined) {
+    return (
+      <main className="mx-auto w-full max-w-6xl">
+        <p className="text-sm text-muted-foreground" role="status">
+          Loading today&apos;s plan...
+        </p>
+      </main>
+    );
+  }
+
   if (data.state === "not_generated") {
     return (
       <main className="mx-auto w-full max-w-6xl space-y-8">
@@ -134,6 +225,8 @@ export default function DashboardPage() {
             focused plan based on your current goal and safety information.
           </p>
         </header>
+
+        <NutritionStatusCard localDate={data.localDate} />
 
         {actionError !== null ? (
           <div
@@ -211,6 +304,8 @@ export default function DashboardPage() {
           on one step at a time.
         </p>
       </header>
+
+      <NutritionStatusCard localDate={data.localDate} />
 
       {actionError !== null ? (
         <div
