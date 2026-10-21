@@ -28,7 +28,7 @@ const AI_CAPABILITY_DEFINITIONS: Record<AiCapability, AiCapabilityDefinition> =
       modelEnvironmentVariable: 'OPENAI_MODEL_MEAL_DRAFT',
       defaultModel: 'gpt-5.6-luna',
       maxInputCharacters: 2_000,
-      maxOutputTokens: 600,
+      maxOutputTokens: 2_000,
     },
     [AiCapability.DailySummary]: {
       modelEnvironmentVariable: 'OPENAI_MODEL_DAILY_SUMMARY',
