@@ -16,7 +16,7 @@ describe('AiCapabilityConfig', () => {
     expect(capabilityConfig.get(AiCapability.MealDraft)).toEqual({
       model: 'gpt-5.6-luna',
       maxInputCharacters: 2_000,
-      maxOutputTokens: 600,
+      maxOutputTokens: 2_000,
     });
 
     expect(capabilityConfig.get(AiCapability.DailySummary)).toEqual({
