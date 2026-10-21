@@ -41,6 +41,10 @@ export type {
   ConfirmMealRequest,
   ConfirmMealResponse,
   MealType,
+  DailyNutritionTotalsResponse,
+  ListMealsResponse,
+  MealEntryResponse,
+  UpdateMealRequest,
 } from "@your-shadow/contracts";
 
 export {

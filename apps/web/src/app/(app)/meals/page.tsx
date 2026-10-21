@@ -21,6 +21,7 @@ import {
   MealDraftEditor,
   type ReviewedMealDraft,
 } from "./components/meal-draft-editor";
+import { MealLogPanel } from "./components/meal-log-panel";
 import { FeaturePageShell } from "../../components/feature-page-shell";
 import { Button } from "../../components/ui/button";
 import { Card } from "../../components/ui/card";
@@ -61,6 +62,7 @@ export default function MealsPage() {
   const [reviewState, setReviewState] = useState<ReviewState>(null);
   const [isParsing, setIsParsing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [mealLogRefreshKey, setMealLogRefreshKey] = useState(0);
   const inFlight = useRef(false);
   const confirmationAttempt = useRef<{
     payload: string;
@@ -170,6 +172,7 @@ export default function MealsPage() {
         confirmation,
         caloriesKcal: draft.totals.caloriesKcal,
       });
+      setMealLogRefreshKey((current) => current + 1);
     } catch (error) {
       setSaveError(getMealConfirmationErrorMessage(error));
     } finally {
@@ -319,6 +322,8 @@ export default function MealsPage() {
           description="The draft was discarded. Nothing has been saved."
         />
       ) : null}
+
+      <MealLogPanel refreshKey={mealLogRefreshKey} />
     </FeaturePageShell>
   );
 }

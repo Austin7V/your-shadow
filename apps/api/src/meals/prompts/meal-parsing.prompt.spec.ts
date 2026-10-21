@@ -49,4 +49,12 @@ describe('meal parsing prompt', () => {
       'request one concise clarification',
     );
   });
+  it('supports meal descriptions in different languages', () => {
+    expect(MEAL_PARSING_INSTRUCTIONS).toContain(
+      'The meal description may be written in any language.',
+    );
+    expect(MEAL_PARSING_INSTRUCTIONS).toContain(
+      'Return food names in the same language as the meal description when practical.',
+    );
+  });
 });
