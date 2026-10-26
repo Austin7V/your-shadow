@@ -39,6 +39,12 @@ export class Exercise {
 
   @Column({
     type: 'jsonb',
+    default: '[]',
+  })
+  targetAreas!: string[];
+
+  @Column({
+    type: 'jsonb',
     default: '{}',
   })
   workload!: Record<string, unknown>;

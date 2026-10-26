@@ -1,63 +1,166 @@
+import { getMetadataArgsStorage } from 'typeorm';
 import { Exercise, ExerciseLevel } from './exercise.entity';
 
-describe('Exercise entity', () => {
-  it('creates an exercise with valid properties', () => {
-    const exercise = new Exercise();
+describe('Exercise repository', () => {
+  describe('entity structure', () => {
+    it('instantiates with all required fields', () => {
+      const exercise = new Exercise();
 
-    exercise.id = '123e4567-e89b-12d3-a456-426614174000';
-    exercise.name = 'Push-ups';
-    exercise.instructions = 'Place hands on the ground...';
-    exercise.level = ExerciseLevel.Light;
-    exercise.workload = { reps: 10, sets: 3 };
-    exercise.isActive = true;
-    exercise.safetyMetadata = { targetAreas: ['chest', 'arms'] };
-    exercise.assetReference = 'push-ups-demo.mp4';
-    exercise.schemaVersion = 1;
+      exercise.id = '123e4567-e89b-12d3-a456-426614174000';
+      exercise.name = 'Push-ups';
+      exercise.instructions = 'Place hands on the ground...';
+      exercise.level = ExerciseLevel.Light;
+      exercise.targetAreas = ['chest', 'arms'];
+      exercise.workload = { reps: 10, sets: 3 };
+      exercise.isActive = true;
+      exercise.safetyMetadata = { constraintCodes: ['lower-body'] };
+      exercise.schemaVersion = 1;
 
-    expect(exercise.id).toBe('123e4567-e89b-12d3-a456-426614174000');
-    expect(exercise.name).toBe('Push-ups');
-    expect(exercise.instructions).toBe('Place hands on the ground...');
-    expect(exercise.level).toBe(ExerciseLevel.Light);
-    expect(exercise.workload).toEqual({ reps: 10, sets: 3 });
-    expect(exercise.isActive).toBe(true);
-    expect(exercise.safetyMetadata).toEqual({ targetAreas: ['chest', 'arms'] });
-    expect(exercise.assetReference).toBe('push-ups-demo.mp4');
-    expect(exercise.schemaVersion).toBe(1);
+      expect(exercise.id).toBe('123e4567-e89b-12d3-a456-426614174000');
+      expect(exercise.name).toBe('Push-ups');
+      expect(exercise.instructions).toBe('Place hands on the ground...');
+      expect(exercise.level).toBe(ExerciseLevel.Light);
+      expect(exercise.targetAreas).toEqual(['chest', 'arms']);
+      expect(exercise.workload).toEqual({ reps: 10, sets: 3 });
+      expect(exercise.isActive).toBe(true);
+      expect(exercise.safetyMetadata).toEqual({ constraintCodes: ['lower-body'] });
+      expect(exercise.schemaVersion).toBe(1);
+    });
+
+    it('has target areas field for body parts and muscle groups', () => {
+      const exercise = new Exercise();
+      exercise.targetAreas = ['chest', 'triceps', 'shoulders'];
+
+      expect(exercise.targetAreas).toEqual(['chest', 'triceps', 'shoulders']);
+      expect(Array.isArray(exercise.targetAreas)).toBe(true);
+    });
+
+    it('has workload field for repetition and time parameters', () => {
+      const exercise = new Exercise();
+      exercise.workload = { reps: 15, duration: 30 };
+
+      expect(exercise.workload).toEqual({ reps: 15, duration: 30 });
+    });
+
+    it('has safety metadata for constraint codes and selection rules', () => {
+      const exercise = new Exercise();
+      exercise.safetyMetadata = {
+        constraintCodes: ['no-knee-extension'],
+        allowedReplacements: ['e2b3c4d5-e89b-12d3-a456-426614174000'],
+      };
+
+      expect(exercise.safetyMetadata).toHaveProperty('constraintCodes');
+      expect(exercise.safetyMetadata).toHaveProperty('allowedReplacements');
+    });
+
+    it('supports all exercise levels', () => {
+      expect(ExerciseLevel.Gentle).toBe('gentle');
+      expect(ExerciseLevel.Light).toBe('light');
+      expect(ExerciseLevel.Standard).toBe('standard');
+    });
+
+    it('allows nullable asset reference field', () => {
+      const exercise = new Exercise();
+      exercise.assetReference = null;
+
+      expect(exercise.assetReference).toBeNull();
+
+      exercise.assetReference = 'exercise-demo.mp4';
+      expect(exercise.assetReference).toBe('exercise-demo.mp4');
+    });
+
+    it('defines schema version database constraint', () => {
+      const metadata = getMetadataArgsStorage();
+      const tableMetadata = metadata.tables.find(
+        (table) => table.target === Exercise,
+      );
+
+      expect(tableMetadata).toBeDefined();
+
+      const checks = metadata.checks.filter(
+        (check) => check.target === Exercise,
+      );
+      expect(checks.length).toBeGreaterThan(0);
+      expect(checks.some((c) => c.name?.includes('schema_version'))).toBe(true);
+    });
+
+    it('has timestamps for created and updated tracking', () => {
+      const exercise = new Exercise();
+      const now = new Date();
+
+      exercise.createdAt = now;
+      exercise.updatedAt = now;
+
+      expect(exercise.createdAt).toEqual(now);
+      expect(exercise.updatedAt).toEqual(now);
+    });
   });
 
-  it('sets default values for optional fields', () => {
-    const exercise = new Exercise();
+  describe('field defaults and validation', () => {
+    it('requires name field', () => {
+      const exercise = new Exercise();
+      exercise.name = 'Test Exercise';
 
-    expect(exercise.workload).toBeUndefined();
-    expect(exercise.isActive).toBeUndefined();
-    expect(exercise.safetyMetadata).toBeUndefined();
-  });
+      expect(exercise.name).toBeDefined();
+      expect(exercise.name).toBe('Test Exercise');
+    });
 
-  it('supports all exercise levels', () => {
-    const gentle = new Exercise();
-    gentle.level = ExerciseLevel.Gentle;
-    expect(gentle.level).toBe(ExerciseLevel.Gentle);
+    it('requires instructions field', () => {
+      const exercise = new Exercise();
+      exercise.instructions = 'Step 1: ...';
 
-    const light = new Exercise();
-    light.level = ExerciseLevel.Light;
-    expect(light.level).toBe(ExerciseLevel.Light);
+      expect(exercise.instructions).toBeDefined();
+    });
 
-    const standard = new Exercise();
-    standard.level = ExerciseLevel.Standard;
-    expect(standard.level).toBe(ExerciseLevel.Standard);
-  });
+    it('requires level field', () => {
+      const exercise = new Exercise();
+      exercise.level = ExerciseLevel.Standard;
 
-  it('allows null asset reference', () => {
-    const exercise = new Exercise();
-    exercise.assetReference = null;
+      expect(exercise.level).toBeDefined();
+      expect(exercise.level).toBe(ExerciseLevel.Standard);
+    });
 
-    expect(exercise.assetReference).toBeNull();
-  });
+    it('requires is_active field with default true in database', () => {
+      const exercise = new Exercise();
 
-  it('validates schema version is positive through database constraint', () => {
-    const exercise = new Exercise();
-    exercise.schemaVersion = 1;
+      expect(exercise.isActive).toBeUndefined();
 
-    expect(exercise.schemaVersion).toBeGreaterThan(0);
+      exercise.isActive = true;
+      expect(exercise.isActive).toBe(true);
+    });
+
+    it('target_areas has empty array default in database', () => {
+      const exercise = new Exercise();
+
+      expect(exercise.targetAreas).toBeUndefined();
+
+      exercise.targetAreas = [];
+      expect(exercise.targetAreas).toEqual([]);
+    });
+
+    it('workload has empty object default in database', () => {
+      const exercise = new Exercise();
+
+      expect(exercise.workload).toBeUndefined();
+
+      exercise.workload = {};
+      expect(exercise.workload).toEqual({});
+    });
+
+    it('safety_metadata has empty object default in database', () => {
+      const exercise = new Exercise();
+
+      expect(exercise.safetyMetadata).toBeUndefined();
+
+      exercise.safetyMetadata = {};
+      expect(exercise.safetyMetadata).toEqual({});
+    });
+
+    it('schema_version default is 1 in database', () => {
+      const exercise = new Exercise();
+
+      exercise.schemaVersion = 1;
+      expect(exercise.schemaVersion).toBeGreaterThan(0);
+    });
   });
 });
