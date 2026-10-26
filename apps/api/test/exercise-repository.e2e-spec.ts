@@ -1,7 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DataSource, Repository } from 'typeorm';
 import { AppModule } from '../src/app.module';
-import { Exercise, ExerciseLevel } from '../src/workouts/entities/exercise.entity';
+import {
+  Exercise,
+  ExerciseLevel,
+} from '../src/workouts/entities/exercise.entity';
 
 describe('Exercise repository (e2e)', () => {
   let dataSource: DataSource;
@@ -37,7 +40,9 @@ describe('Exercise repository (e2e)', () => {
       });
 
       const saved = await exercisesRepository.save(exercise);
-      const retrieved = await exercisesRepository.findOneByOrFail({ id: saved.id });
+      const retrieved = await exercisesRepository.findOneByOrFail({
+        id: saved.id,
+      });
 
       expect(retrieved.name).toBe('Push-ups');
       expect(retrieved.instructions).toBe('Place hands on ground...');
@@ -45,7 +50,9 @@ describe('Exercise repository (e2e)', () => {
       expect(retrieved.targetAreas).toEqual(['chest', 'arms']);
       expect(retrieved.workload).toEqual({ reps: 10, sets: 3 });
       expect(retrieved.isActive).toBe(true);
-      expect(retrieved.safetyMetadata).toEqual({ constraintCodes: ['no-lower-body'] });
+      expect(retrieved.safetyMetadata).toEqual({
+        constraintCodes: ['no-lower-body'],
+      });
       expect(retrieved.assetReference).toBe('pushups-demo.mp4');
       expect(retrieved.schemaVersion).toBe(1);
     });
@@ -58,7 +65,9 @@ describe('Exercise repository (e2e)', () => {
       });
 
       const saved = await exercisesRepository.save(exercise);
-      const retrieved = await exercisesRepository.findOneByOrFail({ id: saved.id });
+      const retrieved = await exercisesRepository.findOneByOrFail({
+        id: saved.id,
+      });
 
       expect(retrieved.isActive).toBe(true);
     });
@@ -71,7 +80,9 @@ describe('Exercise repository (e2e)', () => {
       });
 
       const saved = await exercisesRepository.save(exercise);
-      const retrieved = await exercisesRepository.findOneByOrFail({ id: saved.id });
+      const retrieved = await exercisesRepository.findOneByOrFail({
+        id: saved.id,
+      });
 
       expect(retrieved.targetAreas).toEqual([]);
       expect(Array.isArray(retrieved.targetAreas)).toBe(true);
@@ -85,7 +96,9 @@ describe('Exercise repository (e2e)', () => {
       });
 
       const saved = await exercisesRepository.save(exercise);
-      const retrieved = await exercisesRepository.findOneByOrFail({ id: saved.id });
+      const retrieved = await exercisesRepository.findOneByOrFail({
+        id: saved.id,
+      });
 
       expect(retrieved.workload).toEqual({});
     });
@@ -98,7 +111,9 @@ describe('Exercise repository (e2e)', () => {
       });
 
       const saved = await exercisesRepository.save(exercise);
-      const retrieved = await exercisesRepository.findOneByOrFail({ id: saved.id });
+      const retrieved = await exercisesRepository.findOneByOrFail({
+        id: saved.id,
+      });
 
       expect(retrieved.safetyMetadata).toEqual({});
     });
@@ -111,7 +126,9 @@ describe('Exercise repository (e2e)', () => {
       });
 
       const saved = await exercisesRepository.save(exercise);
-      const retrieved = await exercisesRepository.findOneByOrFail({ id: saved.id });
+      const retrieved = await exercisesRepository.findOneByOrFail({
+        id: saved.id,
+      });
 
       expect(retrieved.schemaVersion).toBe(1);
     });
@@ -125,7 +142,9 @@ describe('Exercise repository (e2e)', () => {
       });
 
       const saved = await exercisesRepository.save(exercise);
-      const retrieved = await exercisesRepository.findOneByOrFail({ id: saved.id });
+      const retrieved = await exercisesRepository.findOneByOrFail({
+        id: saved.id,
+      });
 
       expect(retrieved.assetReference).toBeNull();
     });
@@ -190,7 +209,9 @@ describe('Exercise repository (e2e)', () => {
       });
 
       const saved = await exercisesRepository.save(exercise);
-      const retrieved = await exercisesRepository.findOneByOrFail({ id: saved.id });
+      const retrieved = await exercisesRepository.findOneByOrFail({
+        id: saved.id,
+      });
 
       expect(retrieved.level).toBe(ExerciseLevel.Gentle);
     });
@@ -203,7 +224,9 @@ describe('Exercise repository (e2e)', () => {
       });
 
       const saved = await exercisesRepository.save(exercise);
-      const retrieved = await exercisesRepository.findOneByOrFail({ id: saved.id });
+      const retrieved = await exercisesRepository.findOneByOrFail({
+        id: saved.id,
+      });
 
       expect(retrieved.level).toBe(ExerciseLevel.Light);
     });
@@ -216,7 +239,9 @@ describe('Exercise repository (e2e)', () => {
       });
 
       const saved = await exercisesRepository.save(exercise);
-      const retrieved = await exercisesRepository.findOneByOrFail({ id: saved.id });
+      const retrieved = await exercisesRepository.findOneByOrFail({
+        id: saved.id,
+      });
 
       expect(retrieved.level).toBe(ExerciseLevel.Standard);
     });
@@ -237,7 +262,9 @@ describe('Exercise repository (e2e)', () => {
       });
 
       const saved = await exercisesRepository.save(exercise);
-      const retrieved = await exercisesRepository.findOneByOrFail({ id: saved.id });
+      const retrieved = await exercisesRepository.findOneByOrFail({
+        id: saved.id,
+      });
 
       expect(retrieved.workload).toEqual({
         reps: 15,
@@ -263,7 +290,9 @@ describe('Exercise repository (e2e)', () => {
       });
 
       const saved = await exercisesRepository.save(exercise);
-      const retrieved = await exercisesRepository.findOneByOrFail({ id: saved.id });
+      const retrieved = await exercisesRepository.findOneByOrFail({
+        id: saved.id,
+      });
 
       expect(retrieved.safetyMetadata).toEqual({
         constraintCodes: ['no-knee-extension', 'no-back-bend'],
@@ -280,11 +309,18 @@ describe('Exercise repository (e2e)', () => {
         name: 'Multi-area exercise',
         instructions: 'Test...',
         level: ExerciseLevel.Standard,
-        targetAreas: ['chest', 'shoulders', 'triceps', 'core'],
+        targetAreas: [
+          'chest',
+          'shoulders',
+          'triceps',
+          'core',
+        ],
       });
 
       const saved = await exercisesRepository.save(exercise);
-      const retrieved = await exercisesRepository.findOneByOrFail({ id: saved.id });
+      const retrieved = await exercisesRepository.findOneByOrFail({
+        id: saved.id,
+      });
 
       expect(retrieved.targetAreas).toEqual(['chest', 'shoulders', 'triceps', 'core']);
       expect(retrieved.targetAreas).toHaveLength(4);
