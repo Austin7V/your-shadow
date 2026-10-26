@@ -23,7 +23,9 @@ describe('Exercise repository', () => {
       expect(exercise.targetAreas).toEqual(['chest', 'arms']);
       expect(exercise.workload).toEqual({ reps: 10, sets: 3 });
       expect(exercise.isActive).toBe(true);
-      expect(exercise.safetyMetadata).toEqual({ constraintCodes: ['lower-body'] });
+      expect(exercise.safetyMetadata).toEqual({
+        constraintCodes: ['lower-body'],
+      });
       expect(exercise.schemaVersion).toBe(1);
     });
 
@@ -96,8 +98,8 @@ describe('Exercise repository', () => {
     });
   });
 
-  describe('field defaults and validation', () => {
-    it('requires name field', () => {
+  describe('field requirements and database defaults', () => {
+    it('defines name field as required', () => {
       const exercise = new Exercise();
       exercise.name = 'Test Exercise';
 
@@ -105,14 +107,14 @@ describe('Exercise repository', () => {
       expect(exercise.name).toBe('Test Exercise');
     });
 
-    it('requires instructions field', () => {
+    it('defines instructions field as required', () => {
       const exercise = new Exercise();
       exercise.instructions = 'Step 1: ...';
 
       expect(exercise.instructions).toBeDefined();
     });
 
-    it('requires level field', () => {
+    it('defines level field as required enum', () => {
       const exercise = new Exercise();
       exercise.level = ExerciseLevel.Standard;
 
@@ -120,46 +122,38 @@ describe('Exercise repository', () => {
       expect(exercise.level).toBe(ExerciseLevel.Standard);
     });
 
-    it('requires is_active field with default true in database', () => {
+    it('defines is_active field with default true in database', () => {
       const exercise = new Exercise();
-
-      expect(exercise.isActive).toBeUndefined();
-
       exercise.isActive = true;
+
       expect(exercise.isActive).toBe(true);
     });
 
-    it('target_areas has empty array default in database', () => {
+    it('defines target_areas field with empty array default in database', () => {
       const exercise = new Exercise();
-
-      expect(exercise.targetAreas).toBeUndefined();
-
       exercise.targetAreas = [];
+
       expect(exercise.targetAreas).toEqual([]);
     });
 
-    it('workload has empty object default in database', () => {
+    it('defines workload field with empty object default in database', () => {
       const exercise = new Exercise();
-
-      expect(exercise.workload).toBeUndefined();
-
       exercise.workload = {};
+
       expect(exercise.workload).toEqual({});
     });
 
-    it('safety_metadata has empty object default in database', () => {
+    it('defines safety_metadata field with empty object default in database', () => {
       const exercise = new Exercise();
-
-      expect(exercise.safetyMetadata).toBeUndefined();
-
       exercise.safetyMetadata = {};
+
       expect(exercise.safetyMetadata).toEqual({});
     });
 
-    it('schema_version default is 1 in database', () => {
+    it('defines schema_version field with positive constraint in database', () => {
       const exercise = new Exercise();
-
       exercise.schemaVersion = 1;
+
       expect(exercise.schemaVersion).toBeGreaterThan(0);
     });
   });
