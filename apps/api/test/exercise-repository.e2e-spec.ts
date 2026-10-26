@@ -309,12 +309,7 @@ describe('Exercise repository (e2e)', () => {
         name: 'Multi-area exercise',
         instructions: 'Test...',
         level: ExerciseLevel.Standard,
-        targetAreas: [
-          'chest',
-          'shoulders',
-          'triceps',
-          'core',
-        ],
+        targetAreas: ['chest', 'shoulders', 'triceps', 'core'],
       });
 
       const saved = await exercisesRepository.save(exercise);
