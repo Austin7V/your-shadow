@@ -317,7 +317,12 @@ describe('Exercise repository (e2e)', () => {
         id: saved.id,
       });
 
-      expect(retrieved.targetAreas).toEqual(['chest', 'shoulders', 'triceps', 'core']);
+      expect(retrieved.targetAreas).toEqual([
+        'chest',
+        'shoulders',
+        'triceps',
+        'core',
+      ]);
       expect(retrieved.targetAreas).toHaveLength(4);
     });
   });
