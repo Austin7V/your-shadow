@@ -1,231 +1,290 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class SeedBeginnerExercises1791000000001 implements MigrationInterface {
+export class SeedBeginnerExercises1791000000001
+  implements MigrationInterface
+{
   name = 'SeedBeginnerExercises1791000000001';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     const exercises = [
       {
         id: '550e8400-e29b-41d4-a716-446655440001',
-        name: 'Push-ups',
-        instructions: 'Place hands shoulder-width apart on the ground. Lower your body until your chest nearly touches the floor. Push back to the starting position. Keep your body in a straight line throughout.',
+        name: 'Отжимания от пола',
+        instructions:
+          'Встаньте в позицию планки с руками на ширине плеч. Опустите тело до тех пор, пока грудь почти не коснётся пола. Вернитесь в исходное положение, выпрямив руки. Во время упражнения держите тело прямой линией.',
         level: 'light',
-        targetAreas: ['chest', 'triceps', 'shoulders'],
+        targetAreas: ['грудь', 'трицепсы', 'плечи'],
         workload: { reps: 10, sets: 3, rest: 60 },
         isActive: true,
         safetyMetadata: {
           constraintCodes: ['shoulder-pain', 'wrist-pain'],
           allowedReplacements: ['550e8400-e29b-41d4-a716-446655440009'],
+          notes:
+            'Если больны плечи или запястья, начните с отжиманий от стены или колен.',
         },
         assetReference: null,
         schemaVersion: 1,
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440002',
-        name: 'Squats',
-        instructions: 'Stand with feet shoulder-width apart. Lower your body by bending your knees and hips. Keep your chest up and weight in your heels. Return to standing position. Do not let knees go past your toes.',
+        name: 'Приседания',
+        instructions:
+          'Встаньте, расставив ноги на ширину плеч. Согните колени и бёдра, опуская бедра вниз. Держите спину прямой, вес распределяйте на пятки. Колени не должны выходить за носки. Вернитесь в исходное положение.',
         level: 'light',
-        targetAreas: ['quadriceps', 'glutes', 'hamstrings'],
+        targetAreas: ['квадрицепсы', 'ягодицы', 'подколенные сухожилия'],
         workload: { reps: 15, sets: 3, rest: 90 },
         isActive: true,
         safetyMetadata: {
-          constraintCodes: ['knee-extension', 'lower-back-pain'],
-          allowedReplacements: ['550e8400-e29b-41d4-a716-446655440010'],
+          constraintCodes: ['knee-pain', 'lower-back-pain'],
+          allowedReplacements: [
+            '550e8400-e29b-41d4-a716-446655440010',
+          ],
+          notes:
+            'При боли в коленях или спине замените на приседания у стены или степ-апы.',
         },
         assetReference: null,
         schemaVersion: 1,
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440003',
-        name: 'Plank',
-        instructions: 'Place forearms on the ground, elbows under shoulders. Lift your body to create a straight line from head to heels. Engage your core. Hold this position without sagging or lifting hips.',
+        name: 'Планка',
+        instructions:
+          'Встаньте на предплечья, локти расположены под плечами. Поднимите тело так, чтобы оно образовало прямую линию от головы до пяток. Напрягите мышцы кора. Держите позицию без проседания спины.',
         level: 'gentle',
-        targetAreas: ['core', 'shoulders', 'back'],
+        targetAreas: ['кор', 'плечи', 'спина'],
         workload: { duration: 30 },
         isActive: true,
         safetyMetadata: {
           constraintCodes: ['wrist-pain', 'lower-back-pain'],
-          allowedReplacements: ['550e8400-e29b-41d4-a716-446655440011'],
+          allowedReplacements: [],
+          notes:
+            'Это базовое упражнение на выносливость. Удерживайте максимально возможное время.',
         },
         assetReference: null,
         schemaVersion: 1,
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440004',
-        name: 'Lunges',
-        instructions: 'Stand upright with feet hip-width apart. Step forward and lower your body until your front knee reaches 90 degrees. Push back to starting position. Alternate legs.',
+        name: 'Выпады',
+        instructions:
+          'Встаньте прямо, ноги на ширине плеч. Сделайте шаг вперед и согните колени, опуская бедро задней ноги к полу. Передняя нога должна быть согнута под 90 градусов. Вернитесь и повторите на другую ногу.',
         level: 'light',
-        targetAreas: ['quadriceps', 'glutes', 'hamstrings', 'balance'],
+        targetAreas: [
+          'квадрицепсы',
+          'ягодицы',
+          'подколенные сухожилия',
+          'баланс',
+        ],
         workload: { reps: 12, sets: 3, rest: 60 },
         isActive: true,
         safetyMetadata: {
-          constraintCodes: ['knee-extension', 'balance-issues'],
-          allowedReplacements: ['550e8400-e29b-41d4-a716-446655440002'],
+          constraintCodes: ['knee-pain', 'balance-issues'],
+          allowedReplacements: [
+            '550e8400-e29b-41d4-a716-446655440010',
+          ],
+          notes:
+            'Хорошее упражнение для баланса. Если скользко, выполняйте возле стены.',
         },
         assetReference: null,
         schemaVersion: 1,
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440005',
-        name: 'Jumping Jacks',
-        instructions: 'Stand with feet together. Jump while spreading your feet shoulder-width apart and raising your arms above your head. Jump back to starting position.',
+        name: 'Прыгающие джеки',
+        instructions:
+          'Встаньте, ноги вместе. Прыгните, одновременно разводя ноги в стороны и поднимая руки вверх. Вернитесь в исходное положение. Повторяйте в быстром темпе.',
         level: 'standard',
-        targetAreas: ['full-body', 'cardio'],
+        targetAreas: ['общая физическая подготовка', 'кардио'],
         workload: { reps: 20, sets: 2, rest: 60 },
         isActive: true,
         safetyMetadata: {
           constraintCodes: ['high-impact', 'joint-pain', 'balance-issues'],
-          allowedReplacements: ['550e8400-e29b-41d4-a716-446655440012'],
+          allowedReplacements: [
+            '550e8400-e29b-41d4-a716-446655440012',
+          ],
+          notes:
+            'Прыжки — высокая нагрузка. При проблемах с суставами используйте низкоударный вариант.',
         },
         assetReference: null,
         schemaVersion: 1,
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440006',
-        name: 'Wall Sit',
-        instructions: 'Lean against a wall with your back flat. Slide down until your knees are at 90 degrees. Keep your back against the wall throughout. Hold this position without moving.',
+        name: 'Приседание у стены',
+        instructions:
+          'Прислонитесь спиной к стене. Слегка отойдите ногами вперед. Опускайтесь, сгибая колени, пока они не образуют угол 90 градусов. Спину держите прижатой к стене. Удерживайте позицию без движения.',
         level: 'gentle',
-        targetAreas: ['quadriceps', 'glutes'],
+        targetAreas: ['квадрицепсы', 'ягодицы'],
         workload: { duration: 30 },
         isActive: true,
         safetyMetadata: {
           constraintCodes: ['knee-pain'],
-          allowedReplacements: ['550e8400-e29b-41d4-a716-446655440002'],
+          allowedReplacements: [],
+          notes:
+            'Безопасная альтернатива приседаниям при боли в коленях.',
         },
         assetReference: null,
         schemaVersion: 1,
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440007',
-        name: 'Glute Bridges',
-        instructions: 'Lie on your back with knees bent and feet flat on the floor. Push through your heels to lift your hips. Squeeze your glutes at the top. Lower back down and repeat.',
+        name: 'Мостик для ягодиц',
+        instructions:
+          'Лягте на спину, колени согнуты, стопы на полу. Напрягая ягодицы, поднимите бёдра вверх, образуя прямую линию от коленей до плеч. Задержитесь в верхней позиции. Опустите и повторите.',
         level: 'gentle',
-        targetAreas: ['glutes', 'hamstrings', 'core'],
+        targetAreas: ['ягодицы', 'подколенные сухожилия', 'кор'],
         workload: { reps: 15, sets: 3, rest: 45 },
         isActive: true,
         safetyMetadata: {
           constraintCodes: ['lower-back-pain'],
-          allowedReplacements: ['550e8400-e29b-41d4-a716-446655440006'],
+          allowedReplacements: [
+            '550e8400-e29b-41d4-a716-446655440006',
+          ],
+          notes:
+            'Мягкое упражнение для ягодиц. Не перегибайте спину в верхней позиции.',
         },
         assetReference: null,
         schemaVersion: 1,
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440008',
-        name: 'Bicep Curls (bodyweight)',
-        instructions: 'Stand facing a wall or door frame. Grip the edge at shoulder height. Lean back keeping your body straight. Pull yourself up towards the frame. Lower and repeat.',
+        name: 'Подтягивания на дверном проёме',
+        instructions:
+          'Встаньте лицом к дверному проёму. Ухватитесь за верхний край. Отклонитесь назад, сохраняя прямое тело. Подтягивайте себя вверх, сгибая руки в локтях. Медленно опускайтесь и повторите.',
         level: 'light',
-        targetAreas: ['biceps', 'shoulders'],
+        targetAreas: ['бицепсы', 'плечи', 'спина'],
         workload: { reps: 8, sets: 3, rest: 90 },
         isActive: true,
         safetyMetadata: {
           constraintCodes: ['shoulder-pain', 'back-pain'],
           allowedReplacements: ['550e8400-e29b-41d4-a716-446655440003'],
+          notes: 'Требует стабильный дверной проём. Сложное упражнение.',
         },
         assetReference: null,
         schemaVersion: 1,
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440009',
-        name: 'Wall Push-ups',
-        instructions: 'Stand arm-length away from a wall. Place hands on the wall at shoulder height. Lean in bending your elbows. Push back to starting position. Easier alternative to floor push-ups.',
+        name: 'Отжимания от стены',
+        instructions:
+          'Встаньте лицом к стене на расстоянии вытянутой руки. Поместите ладони на стену на уровне плеч. Опускайтесь к стене, сгибая локти. Отталкивайтесь обратно. Это облегчённый вариант отжиманий.',
         level: 'gentle',
-        targetAreas: ['chest', 'triceps', 'shoulders'],
+        targetAreas: ['грудь', 'трицепсы', 'плечи'],
         workload: { reps: 15, sets: 2, rest: 45 },
         isActive: true,
         safetyMetadata: {
           constraintCodes: ['shoulder-pain', 'wrist-pain', 'strength'],
           allowedReplacements: [],
+          notes:
+            'Идеальный вариант для новичков или восстановления после травмы.',
         },
         assetReference: null,
         schemaVersion: 1,
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440010',
-        name: 'Step-ups',
-        instructions: 'Find a sturdy chair or bench. Step up with one leg pushing through your heel. Stand on top. Step back down. Alternate leading leg.',
+        name: 'Степ-апы',
+        instructions:
+          'Найдите прочный стул или скамью. Сделайте шаг вверх на сиденье одной ногой. Полностью встаньте, затем спустите вторую ногу. Чередуйте ноги поочередно.',
         level: 'light',
-        targetAreas: ['quadriceps', 'glutes', 'hamstrings'],
+        targetAreas: ['квадрицепсы', 'ягодицы', 'подколенные сухожилия'],
         workload: { reps: 12, sets: 3, rest: 60 },
         isActive: true,
         safetyMetadata: {
-          constraintCodes: ['knee-extension', 'balance-issues'],
+          constraintCodes: ['knee-pain', 'balance-issues'],
           allowedReplacements: ['550e8400-e29b-41d4-a716-446655440002'],
+          notes: 'Хорошая альтернатива приседаниям для ног.',
         },
         assetReference: null,
         schemaVersion: 1,
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440011',
-        name: 'High Knees',
-        instructions: 'Stand upright. Run in place while lifting your knees to waist height. Alternate legs in a quick tempo. Pump your arms naturally.',
+        name: 'Высокие колени на месте',
+        instructions:
+          'Стойте прямо. Поднимайте колени до уровня талии поочередно в быстром темпе. Продолжайте как бег на месте. Размахивайте руками естественно.',
         level: 'standard',
-        targetAreas: ['cardio', 'quadriceps', 'hip-flexors'],
+        targetAreas: ['кардио', 'квадрицепсы', 'сгибатели бёдер'],
         workload: { duration: 30 },
         isActive: true,
         safetyMetadata: {
           constraintCodes: ['high-impact', 'knee-pain', 'joint-pain'],
-          allowedReplacements: ['550e8400-e29b-41d4-a716-446655440012'],
+          allowedReplacements: [
+            '550e8400-e29b-41d4-a716-446655440012',
+          ],
+          notes: 'Интенсивное кардио упражнение. Низкоударный вариант — марш.',
         },
         assetReference: null,
         schemaVersion: 1,
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440012',
-        name: 'Marching in Place',
-        instructions: 'Stand upright with good posture. Lift one knee toward your chest. Lower and lift the other knee. Continue alternating at a comfortable pace. Low-impact cardio option.',
+        name: 'Марш на месте',
+        instructions:
+          'Стойте прямо с хорошей осанкой. Поднимайте одно колено к груди. Опускайте и поднимайте другое. Чередуйте ноги в комфортном темпе. Низкоударное кардио.',
         level: 'gentle',
-        targetAreas: ['cardio', 'hip-flexors'],
+        targetAreas: ['кардио', 'сгибатели бёдер'],
         workload: { duration: 60 },
         isActive: true,
         safetyMetadata: {
           constraintCodes: [],
           allowedReplacements: [],
+          notes:
+            'Самое безопасное кардио упражнение. Подходит для всех уровней.',
         },
         assetReference: null,
         schemaVersion: 1,
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440013',
-        name: 'Superman Hold',
-        instructions: 'Lie face down on the floor. Extend your arms and legs. Lift your chest, arms, and legs off the ground. Squeeze your back muscles. Hold this position.',
+        name: 'Супермен',
+        instructions:
+          'Лягте лицом вниз. Вытяните руки и ноги. Одновременно поднимите грудь, руки и ноги от пола. Напрягите мышцы спины и ягодиц. Удерживайте позицию.',
         level: 'light',
-        targetAreas: ['back', 'glutes', 'core'],
+        targetAreas: ['спина', 'ягодицы', 'кор'],
         workload: { duration: 20 },
         isActive: true,
         safetyMetadata: {
           constraintCodes: ['lower-back-pain'],
-          allowedReplacements: ['550e8400-e29b-41d4-a716-446655440003'],
+          allowedReplacements: ['550e8400-e29b-41d4-a716-446655440006'],
+          notes:
+            'Укрепляет спину. При боли в пояснице не поднимайте ноги высоко.',
         },
         assetReference: null,
         schemaVersion: 1,
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440014',
-        name: 'Tricep Dips (chair)',
-        instructions: 'Sit on the edge of a chair facing away from the seat. Grip the edge with hands. Lower your body by bending elbows. Push back to starting position.',
+        name: 'Отжимания на стуле',
+        instructions:
+          'Сядьте на стул спиной к сиденью. Возьмитесь руками за край сиденья. Опускайте тело, сгибая локти. Отталкивайтесь руками, возвращаясь в исходное положение.',
         level: 'light',
-        targetAreas: ['triceps', 'shoulders', 'chest'],
+        targetAreas: ['трицепсы', 'плечи', 'грудь'],
         workload: { reps: 10, sets: 3, rest: 60 },
         isActive: true,
         safetyMetadata: {
           constraintCodes: ['shoulder-pain', 'wrist-pain'],
-          allowedReplacements: ['550e8400-e29b-41d4-a716-446655440001'],
+          allowedReplacements: ['550e8400-e29b-41d4-a716-446655440009'],
+          notes:
+            'Хорошее упражнение для трицепсов. Стул должен быть прочным.',
         },
         assetReference: null,
         schemaVersion: 1,
       },
       {
         id: '550e8400-e29b-41d4-a716-446655440015',
-        name: 'Mountain Climbers',
-        instructions: 'Start in a plank position. Bring one knee toward your chest quickly. Switch legs in a running motion. Keep your core engaged and body in a straight line.',
+        name: 'Альпинист',
+        instructions:
+          'Встаньте в позицию планки. Быстро подтягивайте колени к груди поочередно, как при беге. Держите тело прямым и кор напряженным на протяжении упражнения.',
         level: 'standard',
-        targetAreas: ['core', 'cardio', 'shoulders'],
+        targetAreas: ['кор', 'кардио', 'плечи'],
         workload: { reps: 20, sets: 2, rest: 60 },
         isActive: true,
         safetyMetadata: {
           constraintCodes: ['wrist-pain', 'shoulder-pain'],
           allowedReplacements: ['550e8400-e29b-41d4-a716-446655440003'],
+          notes:
+            'Интенсивное упражнение. При боли в запястьях выполняйте медленнее.',
         },
         assetReference: null,
         schemaVersion: 1,
@@ -235,7 +294,8 @@ export class SeedBeginnerExercises1791000000001 implements MigrationInterface {
     for (const exercise of exercises) {
       await queryRunner.query(
         `INSERT INTO exercises
-        (id, name, instructions, level, target_areas, workload, is_active, safety_metadata, asset_reference, schema_version, created_at, updated_at)
+        (id, name, instructions, level, target_areas, workload, is_active,
+         safety_metadata, asset_reference, schema_version, created_at, updated_at)
         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW())
         ON CONFLICT (id) DO NOTHING`,
         [
@@ -255,24 +315,25 @@ export class SeedBeginnerExercises1791000000001 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `DELETE FROM exercises WHERE id IN (
-        '550e8400-e29b-41d4-a716-446655440001',
-        '550e8400-e29b-41d4-a716-446655440002',
-        '550e8400-e29b-41d4-a716-446655440003',
-        '550e8400-e29b-41d4-a716-446655440004',
-        '550e8400-e29b-41d4-a716-446655440005',
-        '550e8400-e29b-41d4-a716-446655440006',
-        '550e8400-e29b-41d4-a716-446655440007',
-        '550e8400-e29b-41d4-a716-446655440008',
-        '550e8400-e29b-41d4-a716-446655440009',
-        '550e8400-e29b-41d4-a716-446655440010',
-        '550e8400-e29b-41d4-a716-446655440011',
-        '550e8400-e29b-41d4-a716-446655440012',
-        '550e8400-e29b-41d4-a716-446655440013',
-        '550e8400-e29b-41d4-a716-446655440014',
-        '550e8400-e29b-41d4-a716-446655440015'
-      )`,
-    );
+    const ids = [
+      '550e8400-e29b-41d4-a716-446655440001',
+      '550e8400-e29b-41d4-a716-446655440002',
+      '550e8400-e29b-41d4-a716-446655440003',
+      '550e8400-e29b-41d4-a716-446655440004',
+      '550e8400-e29b-41d4-a716-446655440005',
+      '550e8400-e29b-41d4-a716-446655440006',
+      '550e8400-e29b-41d4-a716-446655440007',
+      '550e8400-e29b-41d4-a716-446655440008',
+      '550e8400-e29b-41d4-a716-446655440009',
+      '550e8400-e29b-41d4-a716-446655440010',
+      '550e8400-e29b-41d4-a716-446655440011',
+      '550e8400-e29b-41d4-a716-446655440012',
+      '550e8400-e29b-41d4-a716-446655440013',
+      '550e8400-e29b-41d4-a716-446655440014',
+      '550e8400-e29b-41d4-a716-446655440015',
+    ];
+
+    const placeholders = ids.map((_, i) => `$${i + 1}`).join(',');
+    await queryRunner.query(`DELETE FROM exercises WHERE id IN (${placeholders})`, ids);
   }
 }

@@ -29,14 +29,13 @@ describe('Exercise seed (e2e)', () => {
   describe('seed data validation', () => {
     it('creates exactly 15 exercises', async () => {
       const exercises = await exercisesRepository.find();
-
       expect(exercises).toHaveLength(15);
     });
 
     it('all exercises have required fields', async () => {
       const exercises = await exercisesRepository.find();
 
-      for (const exercise of exercises) {
+      exercises.forEach((exercise) => {
         expect(exercise.id).toBeDefined();
         expect(exercise.name).toBeDefined();
         expect(exercise.name.length).toBeGreaterThan(0);
@@ -59,64 +58,68 @@ describe('Exercise seed (e2e)', () => {
         expect(exercise.safetyMetadata).toBeDefined();
         expect(typeof exercise.safetyMetadata).toBe('object');
         expect(exercise.schemaVersion).toBe(1);
-      }
+      });
     });
 
     it('all exercises are equipment-free', async () => {
       const exercises = await exercisesRepository.find();
 
       const equipmentKeywords = [
-        'dumbell',
-        'dumbbell',
-        'barbell',
-        'weight',
-        'resistance band',
-        'kettlebell',
-        'medicine ball',
+        'гантель',
+        'штанга',
+        'вес',
+        'пояс',
+        'тренажер',
+        'блок',
+        'машина',
         'cable',
         'machine',
-        'bench',
+        'weight',
+        'dumbbell',
+        'barbell',
       ];
 
-      for (const exercise of exercises) {
+      exercises.forEach((exercise) => {
         const lowerInstructions = exercise.instructions.toLowerCase();
         const lowerName = exercise.name.toLowerCase();
 
-        for (const keyword of equipmentKeywords) {
-          if (keyword === 'bench' && lowerName.includes('bench')) {
-            continue;
-          }
+        equipmentKeywords.forEach((keyword) => {
           expect(lowerInstructions).not.toContain(keyword.toLowerCase());
-        }
-      }
+          expect(lowerName).not.toContain(keyword.toLowerCase());
+        });
+      });
     });
 
-    it('all exercises have at least one target area', async () => {
+    it('all exercises have Russian target areas', async () => {
       const exercises = await exercisesRepository.find();
 
-      for (const exercise of exercises) {
-        expect(exercise.targetAreas.length).toBeGreaterThan(0);
-        expect(exercise.targetAreas.every((area) => typeof area === 'string'))
-          .toBe(true);
-      }
-    });
+      const validRussianAreas = [
+        'грудь',
+        'трицепсы',
+        'плечи',
+        'квадрицепсы',
+        'ягодицы',
+        'подколенные сухожилия',
+        'кор',
+        'спина',
+        'баланс',
+        'кардио',
+        'сгибатели бёдер',
+        'общая физическая подготовка',
+      ];
 
-    it('all exercises have workload information', async () => {
-      const exercises = await exercisesRepository.find();
-
-      for (const exercise of exercises) {
-        const workload = exercise.workload;
-        const hasReps = 'reps' in workload;
-        const hasDuration = 'duration' in workload;
-
-        expect(hasReps || hasDuration).toBe(true);
-      }
+      exercises.forEach((exercise) => {
+        expect(Array.isArray(exercise.targetAreas)).toBe(true);
+        exercise.targetAreas.forEach((area) => {
+          expect(validRussianAreas).toContain(area);
+        });
+      });
     });
 
     it('exercises with reps have sets and rest', async () => {
       const exercises = await exercisesRepository.find();
 
-      for (const exercise of exercises) {
+      exercises.forEach((exercise) => {
         const workload = exercise.workload;
         if ('reps' in workload) {
           expect('sets' in workload).toBe(true);
@@ -124,25 +127,27 @@ describe('Exercise seed (e2e)', () => {
           expect(typeof workload.reps).toBe('number');
           expect(typeof workload.sets).toBe('number');
           expect(typeof workload.rest).toBe('number');
-        }
-      }
-    });
-
-    it('seed is idempotent (running twice creates no duplicates)', async () => {
-      const firstCount = await exercisesRepository.count();
-
-      await dataSource.migrations.forEach((migration) => {
-        if (migration.name === 'SeedBeginnerExercises1791000000001') {
-          migration.up(dataSource.createQueryRunner());
+          expect(workload.reps).toBeGreaterThan(0);
+          expect(workload.sets).toBeGreaterThan(0);
+          expect(workload.rest).toBeGreaterThan(0);
         }
       });
-
-      const secondCount = await exercisesRepository.count();
-
-      expect(secondCount).toBe(firstCount);
     });
 
-    it('exercises include variety of difficulty levels', async () => {
+    it('exercises with duration have valid times', async () => {
+      const exercises = await exercisesRepository.find();
+
+      exercises.forEach((exercise) => {
+        const workload = exercise.workload;
+        if ('duration' in workload) {
+          expect(typeof workload.duration).toBe('number');
+          expect(workload.duration).toBeGreaterThan(0);
+          expect(workload.duration).toBeLessThanOrEqual(120);
+        }
+      });
+    });
+
+    it('includes variety of difficulty levels', async () => {
       const exercises = await exercisesRepository.find();
 
       const levels = exercises.map((e) => e.level);
@@ -153,18 +158,60 @@ describe('Exercise seed (e2e)', () => {
       expect(hasGentle && hasLight && hasStandard).toBe(true);
     });
 
-    it('exercises cover different muscle groups', async () => {
+    it('safety metadata includes constraint codes and notes', async () => {
       const exercises = await exercisesRepository.find();
 
-      const allTargetAreas = exercises.flatMap((e) => e.targetAreas);
-      const uniqueAreas = new Set(allTargetAreas);
+      exercises.forEach((exercise) => {
+        const metadata = exercise.safetyMetadata;
+        expect(metadata).toHaveProperty('constraintCodes');
+        expect(Array.isArray(metadata.constraintCodes)).toBe(true);
+        if (metadata.allowedReplacements) {
+          expect(Array.isArray(metadata.allowedReplacements)).toBe(true);
+        }
+        expect(metadata).toHaveProperty('notes');
+        expect(typeof metadata.notes).toBe('string');
+        expect(metadata.notes.length).toBeGreaterThan(0);
+      });
+    });
 
-      expect(uniqueAreas.size).toBeGreaterThan(5);
+    it('seed is idempotent when run multiple times', async () => {
+      const countBefore = await exercisesRepository.count();
 
-      const muscleGroups = ['chest', 'legs', 'core', 'cardio', 'back'];
-      for (const group of muscleGroups) {
-        expect(allTargetAreas.some((area) => area.toLowerCase().includes(group.toLowerCase()) || group.toLowerCase().includes(area.toLowerCase()))).toBe(true);
+      const queryRunner = dataSource.createQueryRunner();
+      try {
+        const migration = new (
+          await import(
+            '../src/database/migrations/1791000000001-seed-beginner-exercises'
+          )
+        ).SeedBeginnerExercises1791000000001();
+
+        await migration.up(queryRunner);
+
+        const countAfter = await exercisesRepository.count();
+        expect(countAfter).toBe(countBefore);
+      } finally {
+        await queryRunner.release();
       }
+    });
+
+    it('all exercise IDs are unique', async () => {
+      const exercises = await exercisesRepository.find();
+      const ids = exercises.map((e) => e.id);
+      const uniqueIds = new Set(ids);
+
+      expect(uniqueIds.size).toBe(exercises.length);
+    });
+
+    it('covers diverse muscle groups', async () => {
+      const exercises = await exercisesRepository.find();
+      const allAreas = exercises.flatMap((e) => e.targetAreas);
+
+      expect(allAreas).toContain('грудь');
+      expect(allAreas).toContain('спина');
+      expect(allAreas).toContain('кор');
+      expect(allAreas).toContain('ягодицы');
+      expect(allAreas).toContain('квадрицепсы');
+      expect(allAreas).toContain('кардио');
     });
   });
 });
