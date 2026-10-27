@@ -116,8 +116,7 @@ export class SeedBeginnerExercises1791000000001 implements MigrationInterface {
         safetyMetadata: JSON.stringify({
           constraintCodes: ['knee-pain'],
           allowedReplacements: [],
-          notes:
-            'Безопасная альтернатива приседаниям при боли в коленях.',
+          notes: 'Безопасная альтернатива приседаниям при боли в коленях.',
         }),
         assetReference: null,
         schemaVersion: 1,
@@ -128,7 +127,11 @@ export class SeedBeginnerExercises1791000000001 implements MigrationInterface {
         instructions:
           'Лягте на спину, колени согнуты, стопы на полу. Напрягая ягодицы, поднимите бёдра вверх, образуя прямую линию от коленей до плеч. Задержитесь в верхней позиции. Опустите и повторите.',
         level: 'gentle',
-        targetAreas: JSON.stringify(['ягодицы', 'подколенные сухожилия', 'кор']),
+        targetAreas: JSON.stringify([
+          'ягодицы',
+          'подколенные сухожилия',
+          'кор',
+        ]),
         workload: JSON.stringify({ reps: 15, sets: 3, rest: 45 }),
         isActive: true,
         safetyMetadata: JSON.stringify({
@@ -202,14 +205,17 @@ export class SeedBeginnerExercises1791000000001 implements MigrationInterface {
         instructions:
           'Стойте прямо. Поднимайте колени до уровня талии поочередно в быстром темпе. Продолжайте как бег на месте. Размахивайте руками естественно.',
         level: 'standard',
-        targetAreas: JSON.stringify(['кардио', 'квадрицепсы', 'сгибатели бёдер']),
+        targetAreas: JSON.stringify([
+          'кардио',
+          'квадрицепсы',
+          'сгибатели бёдер',
+        ]),
         workload: JSON.stringify({ duration: 30 }),
         isActive: true,
         safetyMetadata: JSON.stringify({
           constraintCodes: ['high-impact', 'knee-pain', 'joint-pain'],
           allowedReplacements: ['550e8400-e29b-41d4-a716-446655440012'],
-          notes:
-            'Интенсивное кардио упражнение. Низкоударный вариант — марш.',
+          notes: 'Интенсивное кардио упражнение. Низкоударный вариант — марш.',
         }),
         assetReference: null,
         schemaVersion: 1,
@@ -262,8 +268,7 @@ export class SeedBeginnerExercises1791000000001 implements MigrationInterface {
         safetyMetadata: JSON.stringify({
           constraintCodes: ['shoulder-pain', 'wrist-pain'],
           allowedReplacements: ['550e8400-e29b-41d4-a716-446655440009'],
-          notes:
-            'Хорошее упражнение для трицепсов. Стул должен быть прочным.',
+          notes: 'Хорошее упражнение для трицепсов. Стул должен быть прочным.',
         }),
         assetReference: null,
         schemaVersion: 1,
