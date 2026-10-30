@@ -40,6 +40,7 @@ export class Exercise {
   @Column({
     type: 'jsonb',
     default: '[]',
+    name: 'target_areas',
   })
   targetAreas!: string[];
 
@@ -52,12 +53,14 @@ export class Exercise {
   @Column({
     type: 'boolean',
     default: true,
+    name: 'is_active',
   })
   isActive!: boolean;
 
   @Column({
     type: 'jsonb',
     default: '{}',
+    name: 'safety_metadata',
   })
   safetyMetadata!: Record<string, unknown>;
 
@@ -65,6 +68,7 @@ export class Exercise {
     type: 'varchar',
     length: 512,
     nullable: true,
+    name: 'asset_reference',
   })
   assetReference!: string | null;
 
