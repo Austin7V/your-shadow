@@ -3,6 +3,7 @@ import { Test } from '@nestjs/testing';
 import { DataSource } from 'typeorm';
 
 import { AppModule } from '../src/app.module';
+import { Exercise } from '../src/workouts/entities/exercise.entity';
 import { SeedBeginnerExercises1791000000001 } from '../src/database/migrations/1791000000001-seed-beginner-exercises';
 
 describe('Exercise seed idempotency (e2e)', () => {
@@ -25,7 +26,7 @@ describe('Exercise seed idempotency (e2e)', () => {
   });
 
   it('does not add rows when the seed runs again', async () => {
-    const exercisesRepository = dataSource.getRepository('exercises');
+    const exercisesRepository = dataSource.getRepository(Exercise);
     const countBefore = await exercisesRepository.count();
     const queryRunner = dataSource.createQueryRunner();
 

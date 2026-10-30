@@ -12,6 +12,7 @@ import { HealthController } from './health/health.controller';
 import { MealsModule } from './meals/meals.module';
 import { PlansModule } from './plans/plans.module';
 import { ProfilesModule } from './profiles/profiles.module';
+import { WorkoutsModule } from './workouts/workouts.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { ProfilesModule } from './profiles/profiles.module';
     ProfilesModule,
     MealsModule,
     PlansModule,
+    WorkoutsModule,
   ],
   controllers: [AppController, HealthController],
   providers: [AppService],
